@@ -6,6 +6,7 @@ import {
   deleteTask,
   markTaskDone,
   fetchQuote,
+  updateNotificationPreference,
 } from "../apis";
 import { AuthContext } from "./AuthContext";
 import { toast } from "react-toastify";
@@ -76,6 +77,18 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
+  // NEW: flip email-opt-in for one task
+  const toggleNotification = async (taskId, notify) => {
+    try {
+      const { data } = await updateNotificationPreference(taskId, notify);
+      // update that one task in local state
+      setTasks(tasks.map((t) => (t._id === taskId ? data.task : t)));
+      toast.success("Notification preference updated");
+    } catch {
+      toast.error("Error updating notification preference");
+    }
+  };
+
   useEffect(() => {
     if (user) loadTasks();
   }, [user]);
@@ -90,6 +103,7 @@ export const TaskProvider = ({ children }) => {
         editTask,
         removeTask,
         checkOff,
+        toggleNotification,
       }}
     >
       {children}

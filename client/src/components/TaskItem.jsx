@@ -1,16 +1,23 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 import { format } from "date-fns";
 
 export default function TaskItem({ task, onEdit }) {
-  const { checkOff } = useContext(TaskContext);
+  const { checkOff, toggleNotification } = useContext(TaskContext);
+  const [notify, setNotify] = useState(task.notifyByEmail);
   const navigate = useNavigate();
 
   const todayStr = format(new Date(), "yyyy-MM-dd");
   const doneToday =
     task.lastMarkedDate &&
     format(new Date(task.lastMarkedDate), "yyyy-MM-dd") === todayStr;
+
+  const handleNotifyChange = async () => {
+    const newVal = !notify;
+    await toggleNotification(task._id, newVal);
+    setNotify(newVal);
+  };
 
   return (
     <div className="bg-white p-4 rounded shadow flex items-center justify-between">
@@ -19,6 +26,20 @@ export default function TaskItem({ task, onEdit }) {
         <div className="flex items-center space-x-1 mt-1">
           <span className="text-red-500 text-2xl">🔥</span>
           <span className="text-xl font-bold">{task.streak}</span>
+        </div>
+        <div className="flex items-center space-x-2 mt-2">
+          <label className="flex items-center space-x-1">
+            <input
+              type="checkbox"
+              checked={notify}
+              onChange={handleNotifyChange}
+              className="form-checkbox h-5 w-5 text-accent"
+            />
+            <span className="text-sm">Email</span>
+          </label>
+          <span className="text-sm text-gray-500">
+            at {task.notificationTime}
+          </span>
         </div>
       </div>
 

@@ -152,6 +152,26 @@ const getTaskHistory = async (req, res, next) => {
     next(err);
   }
 };
+
+// NEW: update a task’s email prefs & time
+const updateNotificationPref = async (req, res, next) => {
+  try {
+    const { notifyByEmail, notificationTime } = req.body;
+    const update = { notifyByEmail };
+    if (notificationTime) update.notificationTime = notificationTime;
+
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.userId },
+      update,
+      { new: true }
+    );
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.json({ message: "Notification prefs updated", task });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getDailyQuote,
   getTasks,
@@ -161,4 +181,5 @@ module.exports = {
   deleteTask,
   markTaskDone,
   getTaskHistory,
+  updateNotificationPref,
 };

@@ -33,3 +33,7 @@ export const markTaskDone = (id) => API.patch(`/tasks/${id}/mark`);
 export const fetchTaskHistory = (id) => API.get(`/tasks/${id}/history`);
 
 export const fetchTaskDetail = (id) => API.get(`/tasks/${id}`);
+
+// NEW — toggle email on/off for a task
+export const updateNotificationPreference = (taskId, notifyByEmail) =>
+  API.patch(`/tasks/${taskId}/notification`, { notifyByEmail });

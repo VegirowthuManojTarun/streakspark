@@ -9,6 +9,7 @@ const {
   deleteTask,
   markTaskDone,
   getTaskHistory,
+  updateNotificationPref,
 } = require("../controllers/taskController");
 const { protect } = require("../middlewares/authMiddleware");
 
@@ -36,5 +37,6 @@ router.put(
 );
 router.delete("/:id", deleteTask);
 router.patch("/:id/mark", markTaskDone);
+router.patch("/:id/notification", updateNotificationPref);
 
 module.exports = router;

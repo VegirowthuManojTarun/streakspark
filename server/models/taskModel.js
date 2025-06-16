@@ -9,6 +9,7 @@ const TaskSchema = new mongoose.Schema(
     longestStreak: { type: Number, default: 0 },
     lastMarkedDate: { type: Date },
     history: [{ type: Date }],
+    notifyByEmail: { type: Boolean, default: false }, // ← NEW
   },
   {
     timestamps: true,

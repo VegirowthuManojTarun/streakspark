@@ -15,5 +15,4 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-const UserModel = mongoose.model("google-logins", UserSchema);
-module.exports = UserModel;
+module.exports = mongoose.model("User", UserSchema);
