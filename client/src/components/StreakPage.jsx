@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchTaskDetail } from "../apis";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   format,
   parseISO,
@@ -14,6 +15,58 @@ import {
   isAfter,
   isSameDay,
 } from "date-fns";
+
+// Animation variants
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      duration: 0.3,
+    },
+  },
+};
+
+const calendarVariants = {
+  initial: { opacity: 0, scale: 0.95 },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  },
+};
+
+const dayVariants = {
+  initial: { scale: 0.8, opacity: 0 },
+  animate: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 500,
+      damping: 25,
+    },
+  },
+  hover: {
+    scale: 1.1,
+    transition: {
+      duration: 0.2,
+    },
+  },
+  tap: { scale: 0.95 },
+};
 
 export default function StreakPage() {
   const { id } = useParams();
@@ -36,13 +89,6 @@ export default function StreakPage() {
     })();
   }, [id]);
 
-  if (!task) {
-    return (
-      <div className="min-h-screen flex justify-center items-center bg-[#17181C]">
-        <div className="text-white text-lg">Loading…</div>
-      </div>
-    );
-  }
 
   // Calendar math
   const today = new Date();
@@ -51,49 +97,87 @@ export default function StreakPage() {
   const blanks = Array(getDay(monthStart)).fill(null);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  return (
-    <div className="min-h-screen bg-[#17181C] flex flex-col items-center justify-center py-6 px-2">
-      <div className="max-w-md w-full bg-[#191A1F] rounded-2xl shadow-lg p-6 md:p-8">
-        <button
-          onClick={() => navigate(-1)}
-          className="text-gray-400 hover:text-white mb-3"
+  if (!task) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gray-50">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-gray-600 text-lg"
         >
-          &larr; Back
-        </button>
-        <h2 className="text-white text-xl md:text-2xl font-bold mb-6">
+          Loading...
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-6 px-2"
+    >
+      <motion.div
+        variants={calendarVariants}
+        className="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 md:p-8"
+      >
+        <motion.button
+          whileHover={{ x: -4 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate(-1)}
+          className="text-gray-500 hover:text-gray-700 mb-3 flex items-center gap-2"
+        >
+          ←<span>Back</span>
+        </motion.button>
+
+        <motion.h2
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-gray-800 text-xl md:text-2xl font-bold mb-6"
+        >
           Monthly Streak
-        </h2>
+        </motion.h2>
 
         {/* Month Nav */}
         <div className="flex items-center justify-between mb-4">
-          <button
-            aria-label="Previous Month"
-            className="text-white/40 text-xl px-2 py-1 rounded-full hover:bg-black/30"
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="text-gray-400 hover:text-gray-600 text-xl px-2 py-1 rounded-full hover:bg-gray-100"
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
           >
-            &#60;
-          </button>
-          <span className="font-bold text-white tracking-wide text-lg md:text-xl">
+            ←
+          </motion.button>
+          <motion.span
+            layout
+            className="font-bold text-gray-700 tracking-wide text-lg md:text-xl"
+          >
             {format(monthStart, "MMMM yyyy")}
-          </span>
-          <button
-            aria-label="Next Month"
-            className="text-white/40 text-xl px-2 py-1 rounded-full hover:bg-black/30"
+          </motion.span>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="text-gray-400 hover:text-gray-600 text-xl px-2 py-1 rounded-full hover:bg-gray-100"
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
           >
-            &#62;
-          </button>
+            →
+          </motion.button>
         </div>
 
         {/* Weekday labels */}
-        <div className="grid grid-cols-7 mb-2 text-center text-[13px] font-semibold text-[#E0E0E0]">
+        <div className="grid grid-cols-7 mb-2 text-center text-sm font-semibold text-gray-400">
           {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((d) => (
             <div key={d}>{d}</div>
           ))}
         </div>
 
         {/* Calendar days grid */}
-        <div className="grid grid-cols-7 gap-2 text-center mb-7 animate-in fade-in">
+        <motion.div
+          className="grid grid-cols-7 gap-2 text-center mb-7"
+          variants={calendarVariants}
+        >
           {blanks.map((_, i) => (
             <div key={"b" + i} />
           ))}
@@ -102,9 +186,13 @@ export default function StreakPage() {
             const isDone = doneSet.has(dayStr);
             const inPast = isBefore(day, today) && !isSameDay(day, today);
             const isFuture = isAfter(day, today);
+
             return (
-              <div
+              <motion.div
                 key={dayStr}
+                variants={dayVariants}
+                whileHover="hover"
+                whileTap="tap"
                 className={`
                   flex items-center justify-center 
                   h-10 w-10 md:h-11 md:w-11 mx-auto 
@@ -112,54 +200,99 @@ export default function StreakPage() {
                   font-semibold text-lg
                   ${
                     isDone
-                      ? "bg-[#1d1e23] border-2 border-[#FE8040]" // Flame: orange border
+                      ? "bg-orange-50 border-2 border-orange-500"
                       : inPast
-                      ? "bg-[#23232A] border-2 border-[#25262b] opacity-100" // Missed: dim bg
-                      : "bg-[#23232A] border-2 border-[#25262b] opacity-60" // Future: faded
+                      ? "bg-gray-50 border-2 border-gray-200"
+                      : "bg-white border-2 border-gray-100"
                   }
-                  transition-all
+                  transition-all duration-200
                 `}
                 style={{ margin: "auto" }}
               >
                 {isDone ? (
-                  <span className="text-2xl" role="img" aria-label="achieved">
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="text-2xl"
+                    role="img"
+                    aria-label="achieved"
+                  >
                     🔥
-                  </span>
+                  </motion.span>
                 ) : inPast ? (
-                  <span className="text-2xl" role="img" aria-label="missed">
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="text-2xl opacity-50"
+                    role="img"
+                    aria-label="missed"
+                  >
                     🥲
-                  </span>
+                  </motion.span>
                 ) : (
-                  <span className="text-gray-500">{format(day, "d")}</span>
+                  <span className="text-gray-400">{format(day, "d")}</span>
                 )}
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
-        {/* Streak Stats - style as bottom bar in reference */}
-        <div className="flex justify-between items-center rounded-lg bg-[#23232A] px-6 py-4 text-white font-semibold">
-          <div className="flex flex-col items-center flex-1">
-            <span className="opacity-80 mb-1 text-[15px]">Current Streak</span>
-            <span className="flex items-center gap-2 text-orange-400 text-2xl font-extrabold">
-              <span className="text-2xl" role="img" aria-label="Current Streak">
+        {/* Streak Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex justify-between items-center rounded-xl bg-gray-50 px-6 py-4 border border-gray-100"
+        >
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex flex-col items-center flex-1"
+          >
+            <span className="text-gray-500 mb-1 text-[15px]">
+              Current Streak
+            </span>
+            <span className="flex items-center gap-2 text-orange-500 text-2xl font-extrabold">
+              <motion.span
+                animate={{
+                  rotate: [0, -10, 10, -10, 0],
+                  scale: [1, 1.1, 1.1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatDelay: 2,
+                }}
+                className="text-2xl"
+              >
                 🔥
-              </span>{" "}
+              </motion.span>
               {task.streak}
             </span>
-          </div>
-          <div className="flex flex-col items-center flex-1 border-l border-[#373840]">
-            <span className="opacity-80 mb-1 text-[15px]">Max Streak</span>
-            <span className="flex items-center gap-2 text-[#ffa600] text-2xl font-extrabold">
-              <span className="text-2xl" role="img" aria-label="Max Streak">
+          </motion.div>
+
+          <div className="flex flex-col items-center flex-1 border-l border-gray-200">
+            <span className="text-gray-500 mb-1 text-[15px]">Max Streak</span>
+            <span className="flex items-center gap-2 text-orange-600 text-2xl font-extrabold">
+              <motion.span
+                animate={{
+                  y: [0, -5, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  repeatDelay: 3,
+                }}
+                className="text-2xl"
+              >
                 📈
-              </span>{" "}
+              </motion.span>
               {task.longestStreak}
             </span>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
