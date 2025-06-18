@@ -6,5 +6,5 @@ const GOOGLE_CALLBACK_URL = "https://streakspark.vercel.app/api/auth/google";
 exports.oath2client = new google.auth.OAuth2(
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_CALLBACK_URL
+  "https://streakspark.vercel.app/api/auth/google"
 );
