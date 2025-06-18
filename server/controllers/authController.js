@@ -8,6 +8,7 @@ const googleLogin = async (req, res) => {
     const { code } = req.query;
 
     console.log("✅ Received authorization code:", code);
+    console.log("🔍 OAuth Redirect URI:", oath2client.redirectUri);
 
     if (!code) {
       console.warn("⚠️ No code received in query.");
