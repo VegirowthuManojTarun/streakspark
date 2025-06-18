@@ -14,7 +14,12 @@ app.use(express.json());
 // --- your existing routes ---
 app.use("/auth", authRouter);
 app.use("/tasks", taskRouter);
-app.get("/", (req, res) => res.send("StreakSpark API is running"));
+app.get("/", (req, res) =>
+  res.send({
+    activeStatus: true,
+    error: false,
+  })
+);
 
 // --- new: cron job for dynamic notificationTime ---
 const cron = require("node-cron");
