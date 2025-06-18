@@ -8,7 +8,17 @@ const taskRouter = require("./routes/taskRouter");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://streakspark.netlify.app",
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // --- your existing routes ---
