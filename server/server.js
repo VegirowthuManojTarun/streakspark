@@ -12,8 +12,8 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 
 // --- your existing routes ---
-app.use("/auth", authRouter);
-app.use("/tasks", taskRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/tasks", taskRouter);
 app.get("/", (req, res) =>
   res.send({
     activeStatus: true,
