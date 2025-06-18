@@ -7,7 +7,8 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mb-6"
+      // Remove the mb-6 class since spacing will be handled by the parent container
+      className="w-full" // Add w-full to ensure proper flex behavior
     >
       <div className="relative">
         <motion.div whileFocus={{ scale: 1.01 }} className="relative">
@@ -16,7 +17,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search habits..."
-            className="w-full px-4 py-3 pl-12 pr-10 
+            className="w-full px-4 py-2 pl-12 pr-10 
                      bg-white rounded-lg border border-gray-200
                      focus:border-orange-400 focus:ring-2 focus:ring-orange-200 
                      outline-none transition-all duration-200
@@ -71,7 +72,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
           </AnimatePresence>
         </motion.div>
 
-        {/* Optional: Search Results Count */}
+        {/* Search Hint - Adjust positioning to work with filter button */}
         <AnimatePresence>
           {searchQuery && (
             <motion.div

@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import TaskList from "./TaskList";
 import TaskModal from "./TaskModal";
 import SearchBar from "./SearchBar";
+import PriorityFilter from "./PriorityFilter";
 import { ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
@@ -84,7 +85,8 @@ export default function Dashboard() {
   const { quote, loading } = useContext(TaskContext);
   const [modalTask, setModalTask] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [priorityFilter, setPriorityFilter] = useState([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   return (
     <motion.div
       variants={pageVariants}
@@ -151,11 +153,25 @@ export default function Dashboard() {
               New Habit
             </motion.button>
           </motion.div>
-          {/* Search Bar */}
-          <SearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
+
+          {/* Search and Filter Bar */}
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-2" // Add mb-6 here instead
+          >
+            <div className="flex-1">
+              <SearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            </div>
+            <PriorityFilter
+              selectedPriorities={priorityFilter}
+              onPriorityChange={setPriorityFilter}
+              isOpen={isFilterOpen}
+              setIsOpen={setIsFilterOpen}
+            />
+          </motion.div>
         </div>
         <AnimatePresence mode="wait">
           {loading ? (
@@ -167,7 +183,11 @@ export default function Dashboard() {
               animate="animate"
               exit={{ opacity: 0, y: -20 }}
             >
-              <TaskList onEdit={setModalTask} searchQuery={searchQuery} />
+              <TaskList
+                onEdit={setModalTask}
+                searchQuery={searchQuery}
+                priorityFilter={priorityFilter}
+              />
             </motion.div>
           )}
         </AnimatePresence>

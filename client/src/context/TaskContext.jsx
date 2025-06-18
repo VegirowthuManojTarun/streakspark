@@ -67,13 +67,16 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
+  // In TaskContext.jsx
   const checkOff = async (id) => {
     try {
       const { data } = await markTaskDone(id);
       setTasks(tasks.map((t) => (t._id === id ? data : t)));
-      toast.success("Marked done!");
-    } catch {
+
+      return data; // Make sure to return the updated task data
+    } catch (error) {
       toast.error("Error marking done");
+      throw error;
     }
   };
 

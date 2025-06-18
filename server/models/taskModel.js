@@ -10,6 +10,13 @@ const TaskSchema = new mongoose.Schema(
     lastMarkedDate: { type: Date },
     history: [{ type: Date }],
     notifyByEmail: { type: Boolean, default: false }, // ← NEW
+    // mark whether the task is “for today”
+    // ← NEW!
+    priority: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5], // 1=Urgent … 5=None
+      default: 5,
+    },
   },
   {
     timestamps: true,

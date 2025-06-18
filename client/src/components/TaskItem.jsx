@@ -1,5 +1,6 @@
 // TaskItem.jsx
 import React, { useContext, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 import { format } from "date-fns";
@@ -81,9 +82,19 @@ const buttonVariants = {
   },
 };
 
-export default function TaskItem({ task, onEdit }) {
+// at top, define label  tailwind‐class map:
+const PRIORITY = {
+  1: { label: "Urgent", className: "bg-red-500 text-white" },
+  2: { label: "High", className: "bg-orange-500 text-white" },
+  3: { label: "Medium", className: "bg-yellow-300 text-black" },
+  4: { label: "Low", className: "bg-green-300 text-black" },
+  5: { label: "None", className: "bg-gray-200 text-black" },
+};
+
+export default function TaskItem({ task, onEdit, onComplete }) {
   const { checkOff, toggleNotification, removeTask } = useContext(TaskContext);
   const [notify, setNotify] = useState(task.notifyByEmail);
+  const [priority, setPriority] = useState(task.priority ?? 5);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -91,6 +102,10 @@ export default function TaskItem({ task, onEdit }) {
   const doneToday =
     task.lastMarkedDate &&
     format(new Date(task.lastMarkedDate), "yyyy-MM-dd") === todayStr;
+  // keep local priority in sync if task prop changes
+  useEffect(() => {
+    setPriority(task.priority);
+  }, [task.priority]);
 
   const handleNotifyChange = async () => {
     const newVal = !notify;
@@ -98,6 +113,27 @@ export default function TaskItem({ task, onEdit }) {
     setNotify(newVal);
   };
 
+  // In TaskItem
+  const handleCheckOff = async () => {
+    if (doneToday) {
+      return;
+    }
+
+    try {
+      const updatedTask = await checkOff(task._id);
+      if (updatedTask) {
+        onComplete(updatedTask);
+      }
+    } catch (error) {
+      console.error("Error marking task:", error);
+    }
+  };
+
+  // In TaskList
+  const handleTaskComplete = (task) => {
+    console.log("TaskList received completed task:", task);
+    setCompletedTask(task);
+  };
   const handleDelete = async () => {
     try {
       await removeTask(task._id);
@@ -118,91 +154,104 @@ export default function TaskItem({ task, onEdit }) {
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-semibold text-gray-800">{task.name}</h3>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              className="flex items-center space-x-1 relative group"
-            >
-              {task.streak === 0 ? (
-                // Inactive Streak
-                <motion.span
-                  initial={{ opacity: 1 }}
-                  animate={{
-                    opacity: [1, 0.3, 1],
-                    scale: [1, 0.95, 1],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2,
-                    ease: "easeInOut",
-                  }}
-                  className="text-3xl opacity-30 grayscale"
-                >
-                  🔥
-                </motion.span>
-              ) : (
-                // Active Streak
-                <motion.span
-                  animate={{
-                    rotate: [-1, 1, -1],
-                    scale: [1, 1.05, 1],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2,
-                    ease: "easeInOut",
-                  }}
-                  className="text-3xl text-red-500"
-                >
-                  🔥
-                </motion.span>
-              )}
-
-              <motion.span
-                initial={{ scale: 1 }}
+            <div className="flex items-center space-x-2">
+              {(() => {
+                const pr = PRIORITY[priority] || PRIORITY[5];
+                return (
+                  <span
+                    className={`px-2 py-1 rounded-full text-sm font-semibold ${pr.className}`}
+                  >
+                    {pr.label}
+                  </span>
+                );
+              })()}
+              <motion.div
                 whileHover={{ scale: 1.1 }}
-                className={`text-2xl font-bold ${
-                  task.streak === 0 ? "text-gray-400" : "text-gray-700"
-                }`}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                className="flex items-center space-x-1 relative group"
               >
-                {task.streak}
-              </motion.span>
+                {task.streak === 0 ? (
+                  // Inactive Streak
+                  <motion.span
+                    initial={{ opacity: 1 }}
+                    animate={{
+                      opacity: [1, 0.3, 1],
+                      scale: [1, 0.95, 1],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                      ease: "easeInOut",
+                    }}
+                    className="text-3xl opacity-30 grayscale"
+                  >
+                    🔥
+                  </motion.span>
+                ) : (
+                  // Active Streak
+                  <motion.span
+                    animate={{
+                      rotate: [-1, 1, -1],
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                      ease: "easeInOut",
+                    }}
+                    className="text-3xl text-red-500"
+                  >
+                    🔥
+                  </motion.span>
+                )}
 
-              {/* Enhanced Tooltips */}
-              {(task.streak === 0 || !doneToday) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute -top-12 left-1/2 transform -translate-x-1/2
+                <motion.span
+                  initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.1 }}
+                  className={`text-2xl font-bold ${
+                    task.streak === 0 ? "text-gray-400" : "text-gray-700"
+                  }`}
+                >
+                  {task.streak}
+                </motion.span>
+
+                {/* Enhanced Tooltips */}
+                {(task.streak === 0 || !doneToday) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute -top-12 left-1/2 transform -translate-x-1/2
                  hidden group-hover:block whitespace-nowrap
                  text-sm bg-gray-800 text-white px-3 py-2 rounded-lg
                  shadow-lg z-20"
-                >
-                  <div className="flex items-center gap-2">
-                    <span>
-                      {task.streak === 0
-                        ? "Start your streak today!"
-                        : "Don't break your streak!"}
-                    </span>
-                    <motion.span
-                      animate={{ x: [0, 3, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 1,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      {task.streak === 0 ? "✨" : "⚡"}
-                    </motion.span>
-                  </div>
-                  <div
-                    className="absolute -top-1 left-1/2 transform -translate-x-1/2
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>
+                        {task.streak === 0
+                          ? "Start your streak today!"
+                          : "Don't break your streak!"}
+                      </span>
+                      <motion.span
+                        animate={{ x: [0, 3, 0] }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        {task.streak === 0 ? "✨" : "⚡"}
+                      </motion.span>
+                    </div>
+                    <div
+                      className="absolute -top-1 left-1/2 transform -translate-x-1/2
                     border-4 border-transparent border-b-gray-800"
-                  />
-                </motion.div>
-              )}
-            </motion.div>
+                    />
+                  </motion.div>
+                )}
+              </motion.div>
+            </div>
           </div>
+          {/* Priority badge + selector */}
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -306,7 +355,7 @@ export default function TaskItem({ task, onEdit }) {
               whileHover="hover"
               whileTap="tap"
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              onClick={() => checkOff(task._id)}
+              onClick={handleCheckOff}
               disabled={doneToday}
               className={`px-4 py-2 rounded-lg flex-1 ${
                 doneToday

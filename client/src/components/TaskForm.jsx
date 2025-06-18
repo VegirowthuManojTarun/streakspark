@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
+// same map for form; or import from a shared file
+const PRIORITY = {
+  1: "Urgent",
+  2: "High",
+  3: "Medium",
+  4: "Low",
+  5: "None",
+};
+
 export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
   const [name, setName] = useState(initial.name || "");
   const [time, setTime] = useState(initial.notificationTime || "08:00");
-
-  const handle = (e) =>
-    e.preventDefault() || onSubmit({ name, notificationTime: time });
-
+  const [priority, setPriority] = useState(initial.priority || 5);
+  const handle = (e) => {
+    e.preventDefault();
+    onSubmit({ name, notificationTime: time, priority });
+  };
   return (
     <motion.form
       initial={{ opacity: 0, y: 20 }}
@@ -52,6 +62,26 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
         />
       </div>
 
+      {/* Priority Input */}
+      <div>
+        <label className="block text-gray-700 text-sm font-semibold mb-2">
+          Priority
+        </label>
+        <motion.select
+          whileFocus={{ scale: 1.01 }}
+          value={priority}
+          onChange={(e) => setPriority(parseInt(e.target.value, 10))}
+          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200
+                    focus:border-orange-400 focus:ring-2 focus:ring-orange-200
+                    outline-none transition-all duration-200 text-gray-700"
+        >
+          {Object.entries(PRIORITY).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </motion.select>
+      </div>
       {/* Form Actions */}
       <div className="flex justify-end space-x-3 pt-4">
         <motion.button
@@ -90,53 +120,3 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
     </motion.form>
   );
 }
-
-// import React, { useState } from "react";
-
-// export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
-//   const [name, setName] = useState(initial.name || "");
-//   const [time, setTime] = useState(initial.notificationTime || "08:00");
-
-//   const handle = (e) =>
-//     e.preventDefault() || onSubmit({ name, notificationTime: time });
-
-//   return (
-//     <form onSubmit={handle} className="space-y-4">
-//       <div>
-//         <label className="block text-sm font-medium">Habit Name</label>
-//         <input
-//           type="text"
-//           value={name}
-//           onChange={(e) => setName(e.target.value)}
-//           required
-//           className="mt-1 block w-full border border-solid border-gray-300 rounded p-2"
-//         />
-//       </div>
-//       <div>
-//         <label className="block text-sm font-medium">Notify at</label>
-//         <input
-//           type="time"
-//           value={time}
-//           onChange={(e) => setTime(e.target.value)}
-//           required
-//           className="mt-1 block w-32 border border-solid border-gray-300 rounded p-2"
-//         />
-//       </div>
-//       <div className="flex justify-end space-x-2">
-//         <button
-//           type="button"
-//           onClick={onCancel}
-//           className="px-4 py-2 rounded border border-solid cursor-pointer"
-//         >
-//           Cancel
-//         </button>
-//         <button
-//           type="submit"
-//           className="btn-primary border border-solid px-4 py-2 rounded cursor-pointer"
-//         >
-//           {initial._id ? "Save" : "Create"}
-//         </button>
-//       </div>
-//     </form>
-//   );
-// }
