@@ -1,6 +1,6 @@
-// PomodoroTimer.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { IoVolumeHighOutline, IoVolumeMuteOutline } from "react-icons/io5";
 import {
   IoTimerOutline,
   IoPauseCircle,
@@ -9,8 +9,9 @@ import {
   IoAddCircleOutline,
   IoRemoveCircleOutline,
 } from "react-icons/io5";
-
 const DEFAULT_TIME = 25 * 60;
+// Add this to your existing PRESET_TIMES constant
+const DEFAULT_VOLUME = 0.3;
 const PRESET_TIMES = [
   { label: "25min", value: 25 },
   { label: "15min", value: 15 },
@@ -22,15 +23,47 @@ export default function PomodoroTimer() {
   const [timeLeft, setTimeLeft] = useState(DEFAULT_TIME);
   const [isActive, setIsActive] = useState(false);
   const [customTime, setCustomTime] = useState(25);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  const [isMuted, setIsMuted] = useState(false);
   const timerRef = useRef(null);
-  const audioRef = useRef(new Audio("/notification.mp3"));
+  const audioRef = useRef(null);
+
+  // Add this function to handle volume changes
+  const handleVolumeChange = (newVolume) => {
+    const volumeValue = newVolume / 100;
+    setVolume(volumeValue);
+    setIsMuted(volumeValue === 0);
+    if (audioRef.current) {
+      audioRef.current.volume = volumeValue;
+    }
+  };
+
+  // Add this function to handle mute toggle
+  const toggleMute = () => {
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.volume = volume;
+        setIsMuted(false);
+      } else {
+        audioRef.current.volume = 0;
+        setIsMuted(true);
+      }
+    }
+  };
+
+  // Add this in your useEffect for audio initialization
+  useEffect(() => {
+    audioRef.current = new Audio("/notification.mp3");
+    audioRef.current.volume = volume;
+  }, []);
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       timerRef.current = setInterval(() => {
         setTimeLeft((time) => time - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && isActive) {
       handleTimerComplete();
     }
 
@@ -39,13 +72,9 @@ export default function PomodoroTimer() {
 
   const handleTimerComplete = () => {
     setIsActive(false);
-    audioRef.current.play();
-    // Optional: Show notification
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("Time's up!", {
-        body: "Your focus session is complete!",
-        icon: "🎯",
-      });
+    clearInterval(timerRef.current);
+    if (audioRef.current) {
+      audioRef.current.play();
     }
   };
 
@@ -65,6 +94,7 @@ export default function PomodoroTimer() {
 
   const handleReset = () => {
     setIsActive(false);
+    clearInterval(timerRef.current);
     setTimeLeft(customTime * 60);
   };
 
@@ -75,6 +105,49 @@ export default function PomodoroTimer() {
       setTimeLeft(newTime * 60);
     }
   };
+
+  // Add this component inside your timer controls section, just before or after the existing controls
+  const VolumeControl = () => (
+    <div className="mb-4 relative">
+      <div className="flex items-center justify-center gap-3">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleMute}
+          className="text-2xl text-gray-500 hover:text-gray-700"
+        >
+          {isMuted ? <IoVolumeMuteOutline /> : <IoVolumeHighOutline />}
+        </motion.button>
+
+        <div className="relative w-32 h-8 flex items-center">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={volume * 100}
+            onChange={(e) => handleVolumeChange(parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
+                   focus:outline-none focus:ring-2 focus:ring-orange-500
+                   [&::-webkit-slider-thumb]:appearance-none
+                   [&::-webkit-slider-thumb]:w-4
+                   [&::-webkit-slider-thumb]:h-4
+                   [&::-webkit-slider-thumb]:bg-orange-500
+                   [&::-webkit-slider-thumb]:rounded-full
+                   [&::-webkit-slider-thumb]:cursor-pointer
+                   [&::-moz-range-thumb]:w-4
+                   [&::-moz-range-thumb]:h-4
+                   [&::-moz-range-thumb]:bg-orange-500
+                   [&::-moz-range-thumb]:border-0
+                   [&::-moz-range-thumb]:rounded-full
+                   [&::-moz-range-thumb]:cursor-pointer"
+          />
+          <span className="absolute right-0 top-8 text-xs text-gray-500">
+            {Math.round(volume * 100)}%
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="relative">
@@ -93,7 +166,8 @@ export default function PomodoroTimer() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg p-4 border border-gray-100"
+            className="fixed inset-x-0 mx-auto top-16 md:absolute md:right-0 md:top-auto md:left-auto 
+                     w-[90%] max-w-sm md:w-80 bg-white rounded-xl shadow-lg p-4 border border-gray-100"
           >
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-700 mb-4">
@@ -101,7 +175,7 @@ export default function PomodoroTimer() {
               </h3>
 
               {/* Timer Display */}
-              <div className="text-4xl font-mono font-bold text-gray-800 mb-4">
+              <div className="text-4xl md:text-5xl font-mono font-bold text-gray-800 mb-4">
                 {formatTime(timeLeft)}
               </div>
 
@@ -124,8 +198,7 @@ export default function PomodoroTimer() {
                           ? "bg-orange-500 text-white"
                           : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                       }
-                      ${isActive ? "opacity-50 cursor-not-allowed" : ""}
-                    `}
+                      ${isActive ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {label}
                   </motion.button>
@@ -182,10 +255,12 @@ export default function PomodoroTimer() {
                   animate={{
                     width: `${(timeLeft / (customTime * 60)) * 100}%`,
                   }}
+                  transition={{ type: "linear" }}
                   className="h-full bg-gradient-to-r from-orange-500 to-orange-400"
                 />
               </div>
-
+              {/* Volume Control - Add this section */}
+              <VolumeControl />
               {/* Controls */}
               <div className="flex justify-center space-x-4">
                 <motion.button
