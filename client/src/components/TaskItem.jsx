@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskContext } from "../context/TaskContext";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import DeleteConfirmModal from "./DeleteConfirmModal";
+import DeleteConfirmModal from "./modals/DeleteConfirmModal";
 const ToggleSwitch = ({ checked, onChange }) => (
   <motion.button
     onClick={onChange}

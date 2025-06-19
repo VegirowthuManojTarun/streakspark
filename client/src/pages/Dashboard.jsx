@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { TaskContext } from "../context/TaskContext";
-import Navbar from "./Navbar";
-import TaskList from "./TaskList";
-import TaskModal from "./TaskModal";
-import SearchBar from "./SearchBar";
-import PriorityFilter from "./PriorityFilter";
+import Navbar from "../components/Navbar";
+import TaskList from "../components/TaskList";
+import TaskModal from "../components/modals/TaskModal";
+import SearchBar from "../components/SearchBar";
+import PriorityFilter from "../components/PriorityFilter";
 import { ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";

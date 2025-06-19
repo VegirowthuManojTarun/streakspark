@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext"; // ← pull in AuthContext
 import { toast } from "react-toastify"; // ← import toast
 
 import { motion, AnimatePresence } from "framer-motion";
-import { CurrentRank, RankLadder } from "./RankDisplay"; // adjust the path as needed
+import { CurrentRank, RankLadder } from "../components/RankDisplay"; // adjust the path as needed
 import {
   IoChevronBackCircle,
   IoChevronBackCircleOutline,

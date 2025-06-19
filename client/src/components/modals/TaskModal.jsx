@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
-import { TaskContext } from "../context/TaskContext";
-import TaskForm from "./TaskForm";
+import { TaskContext } from "../../context/TaskContext";
+import TaskForm from "../TaskForm";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function TaskModal({ task, onClose }) {

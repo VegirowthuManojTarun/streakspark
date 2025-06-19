@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IoShareSocial } from "react-icons/io5";
 import { toPng } from "html-to-image";
 import toast from "react-hot-toast";
-import { ShareModal } from "./ShareModal";
+import { ShareModal } from "../modals/ShareModal";
 
 const ShareButton = ({ contentRef, taskName = "", streak = 0 }) => {
   const [showShareModal, setShowShareModal] = useState(false);

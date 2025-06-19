@@ -1,11 +1,11 @@
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import { Routes, Route, Navigate } from "react-router-dom";
-import LandingPage from "./components/LandingPage";
-import LoginPage from "./components/LoginPage";
-import Dashboard from "./components/Dashboard";
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-import StreakPage from "./components/StreakPage";
+import StreakPage from "./pages/StreakPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 export default function App() {
   return (

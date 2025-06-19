@@ -5,7 +5,7 @@ import TaskItem from "./TaskItem";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 // At the top of TaskList.jsx
-import TaskCompletionModal from './TaskCompletionModal';
+import TaskCompletionModal from "./modals/TaskCompletionModal";
 export default function TaskList({
   onEdit,
   searchQuery = "",
