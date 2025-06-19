@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const { clerkMiddleware } = require("@clerk/express");
 const cors = require("cors");
 require("./config/dbConnections");
 
@@ -19,11 +20,13 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
 
-// --- your existing routes ---
+app.use(express.json());
+app.use(clerkMiddleware()); // Clerk: Needs to be before all routes
+
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", taskRouter);
+
 app.get("/", (req, res) =>
   res.send({
     activeStatus: true,

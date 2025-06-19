@@ -1,39 +1,33 @@
+// client/src/apis.js
+
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
 });
 
-// Attach JWT on every request
-API.interceptors.request.use((config) => {
-  const token = Cookies.get("jwt_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+const withAuth = (token) =>
+  token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
-export const googleAuth = (code) => API.get(`/auth/google?code=${code}`);
-
-export const fetchCurrentUser = () => API.get("/auth/me");
-
-export const fetchQuote = () => API.get("/tasks/quotes");
-
-export const fetchTasks = () => API.get("/tasks");
-
-export const createTask = (data) => API.post("/tasks", data);
-
-export const updateTask = (id, data) => API.put(`/tasks/${id}`, data);
-
-export const deleteTask = (id) => API.delete(`/tasks/${id}`);
-
-export const markTaskDone = (id) => API.patch(`/tasks/${id}/mark`);
-
-export const fetchTaskHistory = (id) => API.get(`/tasks/${id}/history`);
-
-export const fetchTaskDetail = (id) => API.get(`/tasks/${id}`);
-
-// NEW — toggle email on/off for a task
-export const updateNotificationPreference = (taskId, notifyByEmail) =>
-  API.patch(`/tasks/${taskId}/notification`, { notifyByEmail });
+// Each API call accepts a token argument (you get it in your component with useAuth().getToken())
+export const fetchCurrentUser = (token) => API.get("/auth/me", withAuth(token));
+export const fetchQuote = (token) => API.get("/tasks/quotes", withAuth(token));
+export const fetchTasks = (token) => API.get("/tasks", withAuth(token));
+export const createTask = (data, token) =>
+  API.post("/tasks", data, withAuth(token));
+export const updateTask = (id, data, token) =>
+  API.put(`/tasks/${id}`, data, withAuth(token));
+export const deleteTask = (id, token) =>
+  API.delete(`/tasks/${id}`, withAuth(token));
+export const markTaskDone = (id, token) =>
+  API.patch(`/tasks/${id}/mark`, null, withAuth(token));
+export const fetchTaskHistory = (id, token) =>
+  API.get(`/tasks/${id}/history`, withAuth(token));
+export const fetchTaskDetail = (id, token) =>
+  API.get(`/tasks/${id}`, withAuth(token));
+export const updateNotificationPreference = (taskId, notifyByEmail, token) =>
+  API.patch(
+    `/tasks/${taskId}/notification`,
+    { notifyByEmail },
+    withAuth(token)
+  );

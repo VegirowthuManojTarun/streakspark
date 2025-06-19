@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const axios = require("axios");
 const Task = require("../models/taskModel");
+const { getAuth } = require("@clerk/express");
 
 let cachedQuote = null;
 let cacheDate = null;
@@ -30,10 +31,10 @@ const getDailyQuote = async (req, res) => {
 };
 
 // GET /tasks
-// GET /tasks
 const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.userId }).lean();
+    const { userId } = getAuth(req);
+    const tasks = await Task.find({ user: userId }).lean();
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -43,7 +44,8 @@ const getTasks = async (req, res) => {
 // GET /tasks/:id
 const getTaskById = async (req, res) => {
   try {
-    const task = await Task.findOne({ _id: req.params.id, user: req.userId });
+    const { userId } = getAuth(req);
+    const task = await Task.findOne({ _id: req.params.id, user: userId });
     if (!task) return res.status(404).json({ message: "Task not found" });
     res.json(task);
   } catch (err) {
@@ -53,6 +55,7 @@ const getTaskById = async (req, res) => {
 
 // POST /tasks
 const createTask = async (req, res) => {
+  const { userId } = getAuth(req);
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
@@ -61,7 +64,7 @@ const createTask = async (req, res) => {
     const { name, notificationTime, priority } = req.body;
     const task = await Task.create({
       name,
-      user: req.userId,
+      user: userId,
       notificationTime,
       priority,
     });
@@ -73,6 +76,7 @@ const createTask = async (req, res) => {
 
 // PUT /tasks/:id
 const updateTask = async (req, res) => {
+  const { userId } = getAuth(req);
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
@@ -83,7 +87,7 @@ const updateTask = async (req, res) => {
     if (priority !== undefined) update.priority = priority;
 
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.userId },
+      { _id: req.params.id, user: userId },
       update,
       { new: true, runValidators: true }
     );
@@ -97,9 +101,10 @@ const updateTask = async (req, res) => {
 // DELETE /tasks/:id
 const deleteTask = async (req, res) => {
   try {
+    const { userId } = getAuth(req);
     const task = await Task.findOneAndDelete({
       _id: req.params.id,
-      user: req.userId,
+      user: userId,
     });
     if (!task) return res.status(404).json({ message: "Task not found" });
     res.json({ message: "Task deleted" });
@@ -111,7 +116,8 @@ const deleteTask = async (req, res) => {
 // PATCH /tasks/:id/mark
 const markTaskDone = async (req, res) => {
   try {
-    const task = await Task.findOne({ _id: req.params.id, user: req.userId });
+    const { userId } = getAuth(req);
+    const task = await Task.findOne({ _id: req.params.id, user: userId });
     if (!task) return res.status(404).json({ message: "Task not found" });
 
     const today = new Date();
@@ -140,9 +146,10 @@ const markTaskDone = async (req, res) => {
 // GET /tasks/:id/history
 const getTaskHistory = async (req, res, next) => {
   try {
+    const { userId } = getAuth(req);
     const task = await Task.findOne({
       _id: req.params.id,
-      user: req.userId,
+      user: userId,
     }).select("history");
     if (!task) return res.status(404).json({ message: "Task not found" });
 
@@ -161,12 +168,13 @@ const getTaskHistory = async (req, res, next) => {
 // NEW: update a task’s email prefs & time
 const updateNotificationPref = async (req, res, next) => {
   try {
+    const { userId } = getAuth(req);
     const { notifyByEmail, notificationTime } = req.body;
     const update = { notifyByEmail };
     if (notificationTime) update.notificationTime = notificationTime;
 
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.userId },
+      { _id: req.params.id, user: userId },
       update,
       { new: true }
     );

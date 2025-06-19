@@ -11,9 +11,9 @@ const {
   getTaskHistory,
   updateNotificationPref,
 } = require("../controllers/taskController");
-const { protect } = require("../middlewares/authMiddleware");
+const { requireAuth } = require("@clerk/express");
 
-router.use(protect);
+router.use(requireAuth()); // All tasks routes are now Clerk-protected
 
 router.get("/quotes", getDailyQuote);
 router.get("/", getTasks);

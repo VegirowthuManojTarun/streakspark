@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@clerk/express": "^1.7.0"
+  }
+}

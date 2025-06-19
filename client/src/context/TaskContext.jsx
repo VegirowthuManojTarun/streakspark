@@ -1,3 +1,4 @@
+// client/src/context/TaskContext.jsx
 import React, { createContext, useState, useEffect, useContext } from "react";
 import {
   fetchTasks,
@@ -15,17 +16,24 @@ import { scheduleNotifications } from "../utils/notifications.js";
 export const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user, getToken } = useContext(AuthContext); // <--- getToken from context!
   const [tasks, setTasks] = useState([]);
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const loadTasks = async () => {
+    if (!user) {
+      setTasks([]);
+      setQuote(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
+      const token = await getToken();
       const [{ data: tasksData }, { data: quoteData }] = await Promise.all([
-        fetchTasks(),
-        fetchQuote(),
+        fetchTasks(token),
+        fetchQuote(token),
       ]);
       setTasks(tasksData);
       setQuote(quoteData);
@@ -39,7 +47,8 @@ export const TaskProvider = ({ children }) => {
 
   const addTask = async (payload) => {
     try {
-      const { data } = await createTask(payload);
+      const token = await getToken();
+      const { data } = await createTask(payload, token);
       setTasks([data, ...tasks]);
       toast.success("Task created");
     } catch {
@@ -49,7 +58,8 @@ export const TaskProvider = ({ children }) => {
 
   const editTask = async (id, payload) => {
     try {
-      const { data } = await updateTask(id, payload);
+      const token = await getToken();
+      const { data } = await updateTask(id, payload, token);
       setTasks(tasks.map((t) => (t._id === id ? data : t)));
       toast.success("Task updated");
     } catch {
@@ -59,7 +69,8 @@ export const TaskProvider = ({ children }) => {
 
   const removeTask = async (id) => {
     try {
-      await deleteTask(id);
+      const token = await getToken();
+      await deleteTask(id, token);
       setTasks(tasks.filter((t) => t._id !== id));
       toast.success("Task deleted");
     } catch {
@@ -67,24 +78,26 @@ export const TaskProvider = ({ children }) => {
     }
   };
 
-  // In TaskContext.jsx
   const checkOff = async (id) => {
     try {
-      const { data } = await markTaskDone(id);
+      const token = await getToken();
+      const { data } = await markTaskDone(id, token);
       setTasks(tasks.map((t) => (t._id === id ? data : t)));
-
-      return data; // Make sure to return the updated task data
+      return data;
     } catch (error) {
       toast.error("Error marking done");
       throw error;
     }
   };
 
-  // NEW: flip email-opt-in for one task
   const toggleNotification = async (taskId, notify) => {
     try {
-      const { data } = await updateNotificationPreference(taskId, notify);
-      // update that one task in local state
+      const token = await getToken();
+      const { data } = await updateNotificationPreference(
+        taskId,
+        notify,
+        token
+      );
       setTasks(tasks.map((t) => (t._id === taskId ? data.task : t)));
       toast.success("Notification preference updated");
     } catch {
