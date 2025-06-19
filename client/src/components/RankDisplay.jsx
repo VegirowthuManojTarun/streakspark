@@ -29,14 +29,16 @@ export const CurrentRank = ({ streak }) => {
 
   return (
     <motion.div
-      className="flex flex-col items-center flex-1 border-l border-gray-200"
+      className="flex flex-col items-center flex-1 border-l border-gray-200 px-2 sm:px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <span className="text-gray-500 mb-1 text-[15px]">Current Rank</span>
+      <span className="text-gray-500 mb-1 text-[13px] sm:text-[15px]">
+        Current Rank
+      </span>
       <div className="flex items-center gap-2">
         <motion.span
-          className="text-2xl"
+          className="text-xl sm:text-2xl"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 10, -10, 0],
@@ -49,12 +51,12 @@ export const CurrentRank = ({ streak }) => {
         >
           {currentRank.icon}
         </motion.span>
-        <span className={`${currentRank.color} text-xl font-bold`}>
+        <span className={`${currentRank.color} text-lg sm:text-xl font-bold`}>
           {currentRank.name}
         </span>
       </div>
       {nextRank && (
-        <div className="w-full mt-2 px-2">
+        <div className="w-full mt-2 px-1 sm:px-2">
           <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
@@ -76,24 +78,32 @@ export const RankLadder = ({ streak }) => {
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm"
+      className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 w-full"
     >
-      <h3 className="text-xl font-bold text-gray-800 mb-4">Rank Ladder</h3>
-      <div className="space-y-3">
+      <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">
+        Rank Ladder
+      </h3>
+      <div className="space-y-2 sm:space-y-3">
         {RANK_TIERS.map((tier) => (
           <motion.div
             key={tier.name}
-            className={`flex items-center p-3 rounded-lg ${
+            className={`flex items-center p-2 sm:p-3 rounded-lg ${
               tier.name === currentRank.name
                 ? "bg-orange-50 border-2 border-orange-200"
                 : "bg-gray-50"
             }`}
             whileHover={{ scale: 1.02 }}
           >
-            <span className="text-2xl mr-3">{tier.icon}</span>
-            <div className="flex-1">
-              <div className={`font-semibold ${tier.color}`}>{tier.name}</div>
-              <div className="text-sm text-gray-500">
+            <span className="text-xl sm:text-2xl mr-2 sm:mr-3">
+              {tier.icon}
+            </span>
+            <div className="flex-1 min-w-0">
+              <div
+                className={`font-semibold ${tier.color} text-sm sm:text-base truncate`}
+              >
+                {tier.name}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-500">
                 {tier.threshold}+ days streak
               </div>
             </div>
@@ -101,7 +111,7 @@ export const RankLadder = ({ streak }) => {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full"
+                className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap ml-2"
               >
                 Current
               </motion.div>
@@ -112,5 +122,4 @@ export const RankLadder = ({ streak }) => {
     </motion.div>
   );
 };
-
 export default RankLadder;
