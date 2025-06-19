@@ -6,6 +6,7 @@ require("./config/dbConnections");
 
 const authRouter = require("./routes/authRouter");
 const taskRouter = require("./routes/taskRouter");
+const timeTableRouter = require("./routes/timeTableRouter");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();
@@ -26,7 +27,7 @@ app.use(clerkMiddleware());
 
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", taskRouter);
-
+app.use("/api/timetable", timeTableRouter);
 app.get("/", (req, res) =>
   res.send({
     activeStatus: true,

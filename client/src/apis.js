@@ -31,3 +31,15 @@ export const updateNotificationPreference = (taskId, notifyByEmail, token) =>
     { notifyByEmail },
     withAuth(token)
   );
+
+export const saveTimetable = (tasks, token) =>
+  API.post("/timetable", { tasks }, withAuth(token));
+
+// apis.js
+export const fetchTimetable = async (token) => {
+  const response = await API.get("/timetable", withAuth(token));
+  return response.data; // Make sure we're returning the data property
+};
+
+export const deleteTimetableTask = (taskId, token) =>
+  API.delete(`/timetable/${taskId}`, withAuth(token));

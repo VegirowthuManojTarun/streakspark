@@ -371,7 +371,7 @@ export default function TaskItem({ task, onEdit, onComplete }) {
               whileHover="hover"
               whileTap="tap"
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              onClick={() => navigate(`/app/${task._id}/streak`)}
+              onClick={() => navigate(`/dashboard/${task._id}/streak`)}
               className="px-4 py-2 rounded-lg flex-1 border-2 border-orange-500 text-orange-500 hover:bg-orange-50 transition-colors duration-200"
             >
               Streak

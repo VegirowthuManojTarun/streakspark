@@ -51,7 +51,7 @@ function buildStreakEmailTemplate(user, tasks) {
           </table>
           <p style="font-style:italic;margin-top:20px;">${quote}</p>
           <div style="text-align:center;margin:30px 0;">
-            <a href="https://streakspark.netlify.app/app"
+            <a href="https://streakspark.netlify.app/dashboard"
                style="background:#e94e77;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;">
               View Your Streaks
             </a>
@@ -60,7 +60,7 @@ function buildStreakEmailTemplate(user, tasks) {
         <tr style="background:#272c3f;color:#bbb;">
           <td style="padding:15px;text-align:center;font-size:12px;">
             You’re receiving this because you enabled daily streak emails.
-            <a href="https://streakspark.netlify.app/app/settings" style="color:#fff;text-decoration:underline;">Manage Preferences</a>
+            <a href="https://streakspark.netlify.app/dashboard" style="color:#fff;text-decoration:underline;">Manage Preferences</a>
           </td>
         </tr>
       </table>

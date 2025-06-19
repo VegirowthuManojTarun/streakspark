@@ -18,13 +18,13 @@ export default function LoginPage() {
         avatar: user.imageUrl,
         id: user.id,
       });
-      navigate("/app");
+      navigate("/dashboard");
     }
   }, [isSignedIn, user, setUser, navigate]);
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <SignIn routing="hash" forceRedirectUrl="/app" />
+      <SignIn routing="hash" forceRedirectUrl="/dashboard" />
     </div>
   );
 }

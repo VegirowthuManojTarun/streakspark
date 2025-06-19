@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StreakPage from "./pages/StreakPage";
 import ErrorBoundary from "./components/ErrorBoundary";
+import TimetablePage from "./pages/TimetablePage";
 export default function App() {
   return (
     <>
@@ -15,7 +16,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/app"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
@@ -23,7 +24,7 @@ export default function App() {
           }
         />
         <Route
-          path="/app/:id/streak"
+          path="/dashboard/:id/streak"
           element={
             <ProtectedRoute>
               <ErrorBoundary>
@@ -32,6 +33,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/timetable" element={<TimetablePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
