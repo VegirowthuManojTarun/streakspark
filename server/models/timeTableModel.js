@@ -17,6 +17,10 @@ const timeTableTaskSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  completedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 const timeTableSchema = new mongoose.Schema({
@@ -32,5 +36,31 @@ const timeTableSchema = new mongoose.Schema({
     index: true,
   },
 });
+
+// Add method to check if task is completed today
+timeTableTaskSchema.methods.isCompletedToday = function () {
+  if (!this.completedAt) return false;
+
+  const today = new Date();
+  const completedDate = new Date(this.completedAt);
+
+  return (
+    completedDate.getDate() === today.getDate() &&
+    completedDate.getMonth() === today.getMonth() &&
+    completedDate.getFullYear() === today.getFullYear()
+  );
+};
+
+// Add method to clear old completions
+timeTableSchema.methods.clearOldCompletions = function () {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  this.tasks.forEach((task) => {
+    if (task.completedAt && task.completedAt < today) {
+      task.completedAt = null;
+    }
+  });
+};
 
 module.exports = mongoose.model("TimeTable", timeTableSchema);

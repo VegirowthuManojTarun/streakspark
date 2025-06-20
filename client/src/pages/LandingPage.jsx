@@ -1,49 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-const Navbar = () => (
-  <nav className="absolute top-0 left-0 right-0 z-10">
-    <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center space-x-2"
-      >
-        <span className="text-2xl">🔥</span>
-        <span className="text-white font-bold text-xl">StreakSpark</span>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-      >
-        <Link
-          to="/login"
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 
-                     border border-white/20 rounded-full transition-all duration-200
-                     text-white font-medium group"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-            />
-          </svg>
-          <span className="group-hover:translate-x-1 transition-transform duration-200">
-            Sign In
-          </span>
-        </Link>
-      </motion.div>
-    </div>
-  </nav>
-);
+import LandingNavbar from "../components/LandingNavbar";
 
 const FeatureCard = ({ icon, title, description }) => (
   <motion.div
@@ -93,7 +51,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 overflow-hidden">
       {/* Hero Section */}
-      <Navbar />
+      <LandingNavbar />
       <div className="container mx-auto px-4 pt-20">
         <div className="flex flex-col items-center justify-center text-center">
           <motion.div
@@ -170,12 +128,17 @@ export default function LandingPage() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto"
           >
             <FeatureCard
               icon="🎯"
               title="Smart Habit Tracking"
               description="Set daily, weekly, or custom habits. Track your progress with beautiful visualizations and stay motivated with streak counters."
+            />
+            <FeatureCard
+              icon="📅"
+              title="Daily Timetable"
+              description="Plan your day effortlessly with our intuitive timetable. Schedule tasks, set reminders, and maintain a structured daily routine."
             />
             <FeatureCard
               icon="⏰"
@@ -202,8 +165,48 @@ export default function LandingPage() {
               title="Cross-Platform Sync"
               description="Access your habits anywhere. Seamlessly sync across devices and never lose track of your progress."
             />
+            <FeatureCard
+              icon="⚡"
+              title="Time Management"
+              description="Optimize your daily schedule with our powerful timetable tools. Stay organized and achieve more with effective time blocking."
+            />
           </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="max-w-4xl mx-auto mt-10 px-4"
+          >
+            <div className="bg-white/15 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <motion.div
+                  animate={{
+                    rotate: [0, 5, -5, 0],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatDelay: 1,
+                  }}
+                  className="text-5xl"
+                >
+                  📅
+                </motion.div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    New: Daily Timetable
+                  </h3>
+                  <p className="text-white/90 text-lg leading-relaxed">
+                    Take control of your day with our new Timetable feature!
+                    Plan your schedule, track tasks, and maintain perfect timing
+                    for your habits. Experience seamless organization with
+                    intelligent time blocking and visual progress tracking.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
           {/* Quote Section */}
           <QuoteSection />
 
@@ -370,20 +373,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-
-// export default function LandingPage() {
-//   return (
-//     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-primary to-secondary text-white">
-//       <h1 className="text-5xl font-bold mb-4">Welcome to StreakSpark</h1>
-//       <p className="mb-8 text-lg max-w-xl text-center">
-//         Build habits, stay motivated, and watch your streaks grow every day!
-//       </p>
-//       <Link to="/login" className="btn-primary">
-//         Get Started
-//       </Link>
-//     </div>
-//   );
-// }

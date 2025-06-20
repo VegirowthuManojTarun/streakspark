@@ -1,7 +1,13 @@
 // src/components/Timetable/AddTaskModal.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { IoClose } from "react-icons/io5";
+import {
+  IoClose,
+  IoTimeOutline,
+  IoCalendarOutline,
+  IoCheckmarkCircleOutline,
+  IoSparklesOutline,
+} from "react-icons/io5";
 
 export default function AddTaskModal({
   isOpen,
@@ -12,16 +18,56 @@ export default function AddTaskModal({
   const [startTime, setStartTime] = useState(suggestedStartTime);
   const [endTime, setEndTime] = useState("");
   const [taskName, setTaskName] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
+  // Validate form as user types
+  useEffect(() => {
+    setIsValid(startTime && endTime && taskName.trim().length > 0);
+  }, [startTime, endTime, taskName]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAdd({
+    if (!isValid) return;
+
+    const task = {
       startTime,
       endTime,
-      taskName,
-    });
+      taskName: taskName.trim(),
+    };
+
+    onAdd(task);
     setTaskName("");
     setEndTime("");
+  };
+
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.95,
+      y: 20,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 0.5,
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.95,
+      y: 20,
+      transition: {
+        duration: 0.2,
+      },
+    },
+  };
+
+  const inputVariants = {
+    focus: { scale: 1.02 },
+    blur: { scale: 1 },
   };
 
   return (
@@ -31,82 +77,132 @@ export default function AddTaskModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           onClick={onClose}
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white rounded-xl p-6 w-full max-w-md"
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-semibold text-gray-800">
-                Add New Task
-              </h3>
-              <button
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="flex items-center gap-2"
+              >
+                <IoSparklesOutline className="w-6 h-6 text-orange-500" />
+                <h3 className="text-xl font-bold text-gray-800">
+                  Plan Your Time
+                </h3>
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <IoClose className="w-6 h-6" />
-              </button>
+              </motion.button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Start Time
-                </label>
-                <input
-                  type="time"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                  required
-                />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Time Inputs */}
+              <div className="grid grid-cols-2 gap-4">
+                <motion.div
+                  variants={inputVariants}
+                  whileFocus="focus"
+                  animate="blur"
+                >
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <IoTimeOutline className="w-4 h-4 text-orange-500" />
+                    Start Time
+                  </label>
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-full rounded-lg border-2 border-gray-200 
+                             focus:border-orange-500 focus:ring-orange-500 
+                             transition-colors"
+                    required
+                  />
+                </motion.div>
+
+                <motion.div
+                  variants={inputVariants}
+                  whileFocus="focus"
+                  animate="blur"
+                >
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <IoTimeOutline className="w-4 h-4 text-orange-500" />
+                    End Time
+                  </label>
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-full rounded-lg border-2 border-gray-200 
+                             focus:border-orange-500 focus:ring-orange-500 
+                             transition-colors"
+                    required
+                  />
+                </motion.div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  End Time
-                </label>
-                <input
-                  type="time"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Task Name
+              {/* Task Name Input */}
+              <motion.div
+                variants={inputVariants}
+                whileFocus="focus"
+                animate="blur"
+              >
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <IoCalendarOutline className="w-4 h-4 text-orange-500" />
+                  Task Description
                 </label>
                 <input
                   type="text"
                   value={taskName}
                   onChange={(e) => setTaskName(e.target.value)}
-                  className="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                  placeholder="What would you like to accomplish?"
+                  className="w-full rounded-lg border-2 border-gray-200 
+                           focus:border-orange-500 focus:ring-orange-500 
+                           transition-colors"
                   required
                 />
-              </div>
+              </motion.div>
 
+              {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-2 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50"
+                  className="flex-1 py-3 border-2 border-gray-200 text-gray-700 
+                           rounded-lg font-medium hover:bg-gray-50 
+                           transition-colors flex items-center justify-center gap-2"
                 >
                   Cancel
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="flex-1 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600"
+                  disabled={!isValid}
+                  className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-orange-600 
+                           text-white rounded-lg font-medium 
+                           hover:from-orange-600 hover:to-orange-700 
+                           transition-all disabled:opacity-50 disabled:cursor-not-allowed
+                           flex items-center justify-center gap-2"
                 >
+                  <IoCheckmarkCircleOutline className="w-5 h-5" />
                   Add Task
-                </button>
+                </motion.button>
               </div>
             </form>
           </motion.div>

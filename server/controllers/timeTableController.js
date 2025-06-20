@@ -3,8 +3,6 @@ const { validationResult } = require("express-validator");
 const TimeTable = require("../models/timeTableModel");
 const { getAuth } = require("@clerk/express");
 
-// controllers/timeTableController.js
-
 const getTimetable = async (req, res) => {
   try {
     const { userId } = getAuth(req);
@@ -16,14 +14,29 @@ const getTimetable = async (req, res) => {
       },
     });
 
-    // Make sure we're sending the tasks array, even if empty
-    res.json(timetable?.tasks || []);
+    if (timetable) {
+      // Clear old completions
+      timetable.clearOldCompletions();
+      await timetable.save();
+
+      // Transform tasks to include completion status
+      const tasks = timetable.tasks.map((task) => ({
+        _id: task._id,
+        startTime: task.startTime,
+        endTime: task.endTime,
+        taskName: task.taskName,
+        isCompleted: task.isCompletedToday(),
+        completedAt: task.completedAt,
+      }));
+      res.json(tasks);
+    } else {
+      res.json([]);
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Save timetable
 const saveTimetable = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -38,12 +51,31 @@ const saveTimetable = async (req, res) => {
       return res.status(400).json({ message: "Invalid tasks format" });
     }
 
-    // Sort tasks by start time
+    // Get existing timetable to preserve completion status
+    const existingTimetable = await TimeTable.findOne({
+      user: userId,
+      date: {
+        $gte: new Date().setHours(0, 0, 0, 0),
+        $lt: new Date().setHours(23, 59, 59, 999),
+      },
+    });
+
+    // Create completion status map from existing tasks
+    const completionMap = new Map();
+    if (existingTimetable) {
+      existingTimetable.tasks.forEach((task) => {
+        if (task.isCompletedToday()) {
+          completionMap.set(task._id.toString(), task.completedAt);
+        }
+      });
+    }
+
+    // Sort and validate new tasks
     const sortedTasks = [...tasks].sort((a, b) =>
       a.startTime.localeCompare(b.startTime)
     );
 
-    // Validate time ranges and check for overlaps
+    // Validate time ranges
     for (let i = 0; i < sortedTasks.length; i++) {
       const task = sortedTasks[i];
       const nextTask = sortedTasks[i + 1];
@@ -58,6 +90,11 @@ const saveTimetable = async (req, res) => {
         return res.status(400).json({
           message: "Tasks cannot overlap",
         });
+      }
+
+      // Preserve completion status if task ID exists
+      if (task._id && completionMap.has(task._id.toString())) {
+        task.completedAt = completionMap.get(task._id.toString());
       }
     }
 
@@ -84,7 +121,7 @@ const saveTimetable = async (req, res) => {
   }
 };
 
-// Delete a specific task from timetable
+// Add the missing deleteTimetableTask function
 const deleteTimetableTask = async (req, res) => {
   try {
     const { userId } = getAuth(req);
@@ -110,7 +147,59 @@ const deleteTimetableTask = async (req, res) => {
 
     res.json(timetable.tasks);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error deleting task:", err);
+    res.status(500).json({ message: "Failed to delete task" });
+  }
+};
+
+const toggleTaskCompletion = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { userId } = getAuth(req);
+    const { taskId } = req.params;
+    const { completed } = req.body;
+
+    const timetable = await TimeTable.findOne({
+      user: userId,
+      date: {
+        $gte: new Date().setHours(0, 0, 0, 0),
+        $lt: new Date().setHours(23, 59, 59, 999),
+      },
+    });
+
+    if (!timetable) {
+      return res.status(404).json({ message: "Timetable not found" });
+    }
+
+    // Clear old completions
+    timetable.clearOldCompletions();
+
+    // Find the task to toggle
+    const task = timetable.tasks.id(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Update completion status based on request
+    task.completedAt = completed ? new Date() : null;
+    await timetable.save();
+
+    // Return updated task information
+    res.json({
+      taskId,
+      completed,
+      completedAt: task.completedAt,
+      isCompleted: task.isCompletedToday(),
+    });
+  } catch (err) {
+    console.error("Error toggling task completion:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to update task completion status" });
   }
 };
 
@@ -118,4 +207,5 @@ module.exports = {
   getTimetable,
   saveTimetable,
   deleteTimetableTask,
+  toggleTaskCompletion,
 };

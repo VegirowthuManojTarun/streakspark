@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { TaskContext } from "../context/TaskContext";
-import Navbar from "../components/Navbar";
 import TaskList from "../components/TaskList";
 import TaskModal from "../components/modals/TaskModal";
 import SearchBar from "../components/SearchBar";
@@ -8,6 +7,7 @@ import PriorityFilter from "../components/PriorityFilter";
 import { ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
+import TaskListSkeleton from "../components/skeletons/TaskListSkeleton";
 
 // Animation variants
 const pageVariants = {
@@ -61,26 +61,6 @@ const QuoteSection = ({ quote }) => (
   </motion.blockquote>
 );
 
-const LoadingSpinner = () => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="flex justify-center items-center py-12"
-  >
-    <motion.div
-      animate={{
-        rotate: 360,
-        scale: [1, 1.1, 1],
-      }}
-      transition={{
-        rotate: { duration: 1.5, repeat: Infinity, ease: "linear" },
-        scale: { duration: 1, repeat: Infinity },
-      }}
-      className="w-12 h-12 border-4 border-orange-200 border-t-orange-500 rounded-full"
-    />
-  </motion.div>
-);
-
 export default function Dashboard() {
   const { quote, loading } = useContext(TaskContext);
   const [modalTask, setModalTask] = useState(null);
@@ -94,7 +74,6 @@ export default function Dashboard() {
       animate="animate"
       className="min-h-screen bg-gray-50"
     >
-      <Navbar />
       <div className="container mx-auto max-w-7xl px-4 py-6">
         <AnimatePresence mode="wait">
           {quote && <QuoteSection quote={quote} />}
@@ -175,7 +154,14 @@ export default function Dashboard() {
         </div>
         <AnimatePresence mode="wait">
           {loading ? (
-            <LoadingSpinner />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <TaskListSkeleton />
+            </motion.div>
           ) : (
             <motion.div
               variants={itemVariants}

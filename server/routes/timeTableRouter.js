@@ -1,11 +1,12 @@
 // routes/timeTableRouter.js
 const router = require("express").Router();
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const { requireAuth } = require("@clerk/express");
 const {
   getTimetable,
   saveTimetable,
   deleteTimetableTask,
+  toggleTaskCompletion,
 } = require("../controllers/timeTableController");
 
 // Protect all routes
@@ -26,8 +27,23 @@ const validateTasks = [
     .withMessage("Task name is required"),
 ];
 
+// Validation middleware for task ID
+const validateTaskId = [
+  param("taskId").isMongoId().withMessage("Invalid task ID format"),
+];
+
+// Validation middleware for completion toggle
+const validateCompletion = [
+  param("taskId").isMongoId().withMessage("Invalid task ID format"),
+  body("completed")
+    .isBoolean()
+    .withMessage("Completed status must be a boolean value"),
+];
+
+// Routes
 router.get("/", getTimetable);
 router.post("/", validateTasks, saveTimetable);
-router.delete("/:taskId", deleteTimetableTask);
+router.delete("/:taskId", validateTaskId, deleteTimetableTask);
+router.patch("/:taskId/completion", validateCompletion, toggleTaskCompletion);
 
 module.exports = router;

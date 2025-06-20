@@ -6,6 +6,49 @@ import { TaskContext } from "../context/TaskContext";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import DeleteConfirmModal from "./modals/DeleteConfirmModal";
+import { HiCheck, HiFlag, HiPencil, HiTrash } from "react-icons/hi";
+
+const ActionButton = ({
+  icon,
+  label,
+  onClick,
+  variant = "default",
+  disabled = false,
+}) => {
+  const baseStyles =
+    "rounded-lg transition-all duration-200 flex items-center justify-center gap-2";
+  const variants = {
+    primary: `${
+      disabled
+        ? "bg-gray-200 text-gray-500"
+        : "bg-orange-500 text-white hover:bg-orange-600"
+    }`,
+    secondary: "border-2 border-orange-500 text-orange-500 hover:bg-orange-50",
+    edit: "border-2 border-blue-500 text-blue-500 hover:bg-blue-50",
+    delete: "border-2 border-red-500 text-red-500 hover:bg-red-50",
+  };
+
+  return (
+    <motion.button
+      variants={buttonVariants}
+      whileHover="hover"
+      whileTap="tap"
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      onClick={onClick}
+      disabled={disabled}
+      className={`${baseStyles} ${variants[variant]}
+        sm:px-4 sm:py-2 p-2
+        sm:flex-1
+        ${disabled ? "cursor-not-allowed" : ""}
+      `}
+      aria-label={label}
+    >
+      {icon}
+      <span className="hidden sm:inline">{label}</span>
+    </motion.button>
+  );
+};
+
 const ToggleSwitch = ({ checked, onChange }) => (
   <motion.button
     onClick={onChange}
@@ -149,9 +192,9 @@ export default function TaskItem({ task, onEdit, onComplete }) {
         initial="hidden"
         animate="visible"
         whileHover="hover"
-        className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
+        className="bg-white rounded-xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition-shadow"
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full space-y-4">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-semibold text-gray-800">{task.name}</h3>
             <div className="flex items-center space-x-2">
@@ -286,7 +329,7 @@ export default function TaskItem({ task, onEdit, onComplete }) {
                   </svg>
                 </motion.div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col ">
                   <span className="font-medium text-gray-700">Reminders</span>
                   <motion.span
                     initial={{ opacity: 0 }}
@@ -348,56 +391,37 @@ export default function TaskItem({ task, onEdit, onComplete }) {
             </AnimatePresence>
           </motion.div>
 
-          <div className="flex flex-wrap gap-2 mt-auto">
+          <div className="grid grid-cols-4 sm:flex sm:flex-wrap gap-2 mt-auto">
             {/* Action buttons with enhanced animations */}
-            <motion.button
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+
+            <ActionButton
+              icon={<HiCheck className="w-5 h-5" />}
+              label={doneToday ? "Completed" : "Mark"}
               onClick={handleCheckOff}
               disabled={doneToday}
-              className={`px-4 py-2 rounded-lg flex-1 ${
-                doneToday
-                  ? "bg-gray-200 text-gray-500"
-                  : "bg-orange-500 text-white hover:bg-orange-600"
-              } transition-colors duration-200`}
-            >
-              {doneToday ? "Completed" : "Mark"}
-            </motion.button>
+              variant="primary"
+            />
 
-            <motion.button
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            <ActionButton
+              icon={<HiFlag className="w-5 h-5" />}
+              label="Streak"
               onClick={() => navigate(`/dashboard/${task._id}/streak`)}
-              className="px-4 py-2 rounded-lg flex-1 border-2 border-orange-500 text-orange-500 hover:bg-orange-50 transition-colors duration-200"
-            >
-              Streak
-            </motion.button>
+              variant="secondary"
+            />
 
-            <motion.button
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            <ActionButton
+              icon={<HiPencil className="w-5 h-5" />}
+              label="Edit"
               onClick={() => onEdit(task)}
-              className="px-4 py-2 rounded-lg border-2 border-blue-500 text-blue-500 hover:bg-blue-50 transition-colors duration-200"
-            >
-              Edit
-            </motion.button>
-            {/* Delete Button */}
-            <motion.button
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              variant="edit"
+            />
+
+            <ActionButton
+              icon={<HiTrash className="w-5 h-5" />}
+              label="Delete"
               onClick={() => setShowDeleteConfirm(true)}
-              className="px-4 py-2 rounded-lg border-2 border-red-500 text-red-500 hover:bg-red-50 transition-colors duration-200"
-            >
-              Delete
-            </motion.button>
+              variant="delete"
+            />
           </div>
         </div>
       </motion.div>

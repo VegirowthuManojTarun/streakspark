@@ -43,3 +43,21 @@ export const fetchTimetable = async (token) => {
 
 export const deleteTimetableTask = (taskId, token) =>
   API.delete(`/timetable/${taskId}`, withAuth(token));
+
+export const toggleTaskCompletion = async (taskId, completed, token) => {
+  if (!taskId || typeof completed !== "boolean") {
+    throw new Error("Invalid parameters for task completion toggle");
+  }
+
+  try {
+    const response = await API.patch(
+      `/timetable/${taskId}/completion`,
+      { completed },
+      withAuth(token)
+    );
+    return response;
+  } catch (error) {
+    console.error("Toggle completion API error:", error);
+    throw error;
+  }
+};
