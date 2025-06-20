@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const { clerkMiddleware } = require("@clerk/express");
 const cors = require("cors");
+const path = require("path");
+
 require("./config/dbConnections");
 
 const authRouter = require("./routes/authRouter");
@@ -21,7 +23,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.use(express.static(path.join(__dirname, "/dist")));
 app.use(express.json());
 app.use(clerkMiddleware());
 
@@ -34,6 +36,11 @@ app.get("/", (req, res) =>
     error: false,
   })
 );
+
+//client rendering
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "/dist/index.html"));
+});
 
 //////////////////////////////////////////////////////////////////////
 // === Robust, safe Gmail/Nodemailer Cron Job for Streak Emails === //
