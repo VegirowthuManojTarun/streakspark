@@ -12,17 +12,16 @@ const timeTableRouter = require("./routes/timeTableRouter");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "https://streakspark.netlify.app",
-// ];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://streakspark.netlify.app",
+];
 
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(express.static(path.join(__dirname, "/dist")));
 app.use(express.json());
 app.use(clerkMiddleware());
