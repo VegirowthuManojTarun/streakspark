@@ -30,12 +30,9 @@ app.use(clerkMiddleware());
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/timetable", timeTableRouter);
-app.get("/", (req, res) =>
-  res.send({
-    activeStatus: true,
-    error: false,
-  })
-);
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to StreakSpark" });
+});
 
 //client rendering
 app.get(/^\/(?!api).*/, (req, res) => {
