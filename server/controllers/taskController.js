@@ -62,8 +62,19 @@ const createTask = async (req, res) => {
 
   try {
     const { name, notificationTime, priority } = req.body;
+
+    // 1. Check for existing task with same name for this user
+    const exists = await Task.findOne({
+      user: userId,
+      name: name.trim(),
+    });
+    if (exists) {
+      return res.status(409).json({ message: "Task already exists" });
+    }
+
+    // 2. Continue as before
     const task = await Task.create({
-      name,
+      name: name.trim(),
       user: userId,
       notificationTime,
       priority,

@@ -110,15 +110,20 @@ export default function AddTaskModal({
               </motion.button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {" "}
+              {/* Increased space between sections */}
               {/* Time Inputs */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
+                {" "}
+                {/* Increased gap between time inputs */}
                 <motion.div
                   variants={inputVariants}
                   whileFocus="focus"
                   animate="blur"
+                  className="space-y-2" // Added vertical spacing between label and input
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <IoTimeOutline className="w-4 h-4 text-orange-500" />
                     Start Time
                   </label>
@@ -127,18 +132,18 @@ export default function AddTaskModal({
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                     className="w-full rounded-lg border-2 border-gray-200 
-                             focus:border-orange-500 focus:ring-orange-500 
-                             transition-colors"
+                 focus:border-orange-500 focus:ring-orange-500 
+                 transition-colors px-4 py-3 text-gray-700" // Added better padding
                     required
                   />
                 </motion.div>
-
                 <motion.div
                   variants={inputVariants}
                   whileFocus="focus"
                   animate="blur"
+                  className="space-y-2" // Added vertical spacing between label and input
                 >
-                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <IoTimeOutline className="w-4 h-4 text-orange-500" />
                     End Time
                   </label>
@@ -147,20 +152,20 @@ export default function AddTaskModal({
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                     className="w-full rounded-lg border-2 border-gray-200 
-                             focus:border-orange-500 focus:ring-orange-500 
-                             transition-colors"
+                 focus:border-orange-500 focus:ring-orange-500 
+                 transition-colors px-4 py-3 text-gray-700" // Added better padding
                     required
                   />
                 </motion.div>
               </div>
-
               {/* Task Name Input */}
               <motion.div
                 variants={inputVariants}
                 whileFocus="focus"
                 animate="blur"
+                className="space-y-2" // Added vertical spacing between label and input
               >
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                   <IoCalendarOutline className="w-4 h-4 text-orange-500" />
                   Task Description
                 </label>
@@ -170,22 +175,24 @@ export default function AddTaskModal({
                   onChange={(e) => setTaskName(e.target.value)}
                   placeholder="What would you like to accomplish?"
                   className="w-full rounded-lg border-2 border-gray-200 
-                           focus:border-orange-500 focus:ring-orange-500 
-                           transition-colors"
+               focus:border-orange-500 focus:ring-orange-500 
+               transition-colors px-4 py-3 text-gray-700 
+               placeholder:text-gray-400" // Added better padding and placeholder styling
                   required
                 />
               </motion.div>
-
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-4 pt-2">
+                {" "}
+                {/* Increased padding top and gap */}
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 border-2 border-gray-200 text-gray-700 
-                           rounded-lg font-medium hover:bg-gray-50 
-                           transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3.5 border-2 border-gray-200 text-gray-700 
+               rounded-lg font-medium hover:bg-gray-50 
+               transition-colors flex items-center justify-center gap-2"
                 >
                   Cancel
                 </motion.button>
@@ -194,11 +201,11 @@ export default function AddTaskModal({
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={!isValid}
-                  className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-orange-600 
-                           text-white rounded-lg font-medium 
-                           hover:from-orange-600 hover:to-orange-700 
-                           transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                           flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 
+               text-white rounded-lg font-medium 
+               hover:from-orange-600 hover:to-orange-700 
+               transition-all disabled:opacity-50 disabled:cursor-not-allowed
+               flex items-center justify-center gap-2"
                 >
                   <IoCheckmarkCircleOutline className="w-5 h-5" />
                   Add Task

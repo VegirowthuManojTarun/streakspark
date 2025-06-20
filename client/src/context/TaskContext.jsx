@@ -51,8 +51,11 @@ export const TaskProvider = ({ children }) => {
       const { data } = await createTask(payload, token);
       setTasks([data, ...tasks]);
       toast.success("Task created");
-    } catch {
-      toast.error("Error creating task");
+      return data;
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        toast.error("Task already exists");
+      } else toast.error("Error creating task");
     }
   };
 
