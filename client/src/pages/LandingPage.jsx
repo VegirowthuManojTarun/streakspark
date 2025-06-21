@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import LandingNavbar from "../components/LandingNavbar";
+import ReviewsSection from "../components/ReviewsSection";
 
 const FeatureCard = ({ icon, title, description }) => (
   <motion.div
@@ -286,6 +287,7 @@ export default function LandingPage() {
               </div>
             </div>
           </motion.div>
+          <ReviewsSection />
           {/* Footer */}
           <motion.footer
             initial={{ opacity: 0 }}
