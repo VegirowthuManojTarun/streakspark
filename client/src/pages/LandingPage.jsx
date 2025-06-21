@@ -6,19 +6,35 @@ import LandingNavbar from "../components/LandingNavbar";
 const FeatureCard = ({ icon, title, description }) => (
   <motion.div
     whileHover={{ y: -5, scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
     transition={{ duration: 0.2 }}
-    className="bg-white/15 backdrop-blur-lg rounded-xl p-6 flex flex-col items-center text-center
-               border border-white/20 hover:bg-white/20 transition-all duration-200
-               shadow-lg hover:shadow-xl"
+    className="bg-white/15 backdrop-blur-lg rounded-xl p-6 
+               border border-white/20 hover:bg-white/20 
+               transition-all duration-200 shadow-lg hover:shadow-xl
+               flex flex-col items-center text-center group"
   >
-    <motion.span
-      whileHover={{ scale: 1.1 }}
-      className="text-4xl mb-4 transform transition-transform"
+    <motion.div
+      whileHover={{ scale: 1.1, rotate: [0, 5, -5, 0] }}
+      transition={{ duration: 0.3 }}
+      className="mb-4 p-3 rounded-full bg-white/10 
+                 group-hover:bg-white/20 transition-colors"
     >
-      {icon}
-    </motion.span>
-    <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
-    <p className="text-white/90 text-sm leading-relaxed">{description}</p>
+      <span className="text-4xl transform transition-transform">{icon}</span>
+    </motion.div>
+
+    <h3
+      className="text-xl font-semibold mb-3 text-white 
+                   group-hover:text-white/90 transition-colors"
+    >
+      {title}
+    </h3>
+
+    <p
+      className="text-white/80 text-sm leading-relaxed 
+                  group-hover:text-white/90 transition-colors"
+    >
+      {description}
+    </p>
   </motion.div>
 );
 
@@ -74,21 +90,71 @@ export default function LandingPage() {
             >
               🔥
             </motion.div>
-
-            <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-              Transform Your Life with Daily Habits
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">
+              Stop Breaking Promises to Yourself.
+              <span className="block mt-2 bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">
+                Start Building Lasting Habits
+              </span>
             </h1>
 
             <div className="max-w-3xl mx-auto">
-              <p className="text-lg md:text-xl text-white/90 mb-6 leading-relaxed">
-                Are you struggling to build consistent habits? Want to track
-                your progress and stay motivated? StreakSpark is your personal
-                habit companion that helps you build lasting habits through
-                streak tracking, timely reminders, and social accountability.
+              <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
+                Tired of starting habits but never sticking to them? StreakSpark
+                combines powerful habit tracking, daily planning, and
+                motivational features to help you stay consistent and achieve
+                your goals, one day at a time.
               </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-white/10 p-4 rounded-lg">
+                  <div className="text-2xl mb-2">📊</div>
+                  <h3 className="text-white font-semibold mb-1">
+                    Track Progress
+                  </h3>
+                  <p className="text-white/80 text-sm">
+                    See your growth with visual streaks
+                  </p>
+                </div>
+
+                <div className="bg-white/10 p-4 rounded-lg">
+                  <div className="text-2xl mb-2">⏰</div>
+                  <h3 className="text-white font-semibold mb-1">
+                    Stay Consistent
+                  </h3>
+                  <p className="text-white/80 text-sm">
+                    Smart reminders keep you on track
+                  </p>
+                </div>
+
+                <div className="bg-white/10 p-4 rounded-lg">
+                  <div className="text-2xl mb-2">🎯</div>
+                  <h3 className="text-white font-semibold mb-1">
+                    Achieve Goals
+                  </h3>
+                  <p className="text-white/80 text-sm">
+                    Turn intentions into achievements
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 text-white/80 text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="text-orange-300">✓</span>
+                  No Credit Card
+                </div>
+                <div className="w-1 h-1 bg-white/30 rounded-full"></div>
+                <div className="flex items-center gap-1">
+                  <span className="text-orange-300">✓</span>
+                  Free Forever Plan
+                </div>
+                <div className="w-1 h-1 bg-white/30 rounded-full"></div>
+                <div className="flex items-center gap-1">
+                  <span className="text-orange-300">✓</span>
+                  Quick Setup
+                </div>
+              </div>
             </div>
           </motion.div>
-
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -118,131 +184,108 @@ export default function LandingPage() {
               </svg>
             </Link>
           </motion.div>
-
+          {/* Features Grid */}
           {/* Features Grid */}
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-10">
             Everything You Need to Build Better Habits
           </h2>
-
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto px-4"
           >
             <FeatureCard
               icon="🎯"
-              title="Smart Habit Tracking"
-              description="Set daily, weekly, or custom habits. Track your progress with beautiful visualizations and stay motivated with streak counters."
+              title="Habit Tracking & Analytics"
+              description="Build lasting habits with intelligent tracking and analytics. Monitor streaks, analyze patterns, and visualize your progress journey."
             />
+
             <FeatureCard
               icon="📅"
-              title="Daily Timetable"
-              description="Plan your day effortlessly with our intuitive timetable. Schedule tasks, set reminders, and maintain a structured daily routine."
+              title="Smart Daily Planner"
+              description="Take control of your day with dynamic scheduling, task prioritization, and time blocking. Perfect for balancing habits and daily tasks."
             />
+
             <FeatureCard
-              icon="⏰"
-              title="Smart Reminders"
-              description="Never miss a habit with customizable notifications. Get reminders at your preferred time via email or push notifications."
+              icon="📔"
+              title="Digital Journal"
+              description="Reflect and grow with our beautiful lined diary. Add timestamps, format text, and organize your thoughts in one dedicated space."
             />
-            <FeatureCard
-              icon="📊"
-              title="Progress Analytics"
-              description="View detailed insights about your habits. Track completion rates, longest streaks, and identify patterns in your behavior."
-            />
-            <FeatureCard
-              icon="🤝"
-              title="Social Accountability"
-              description="Share your progress with friends or on social media. Join habit groups and motivate each other to maintain streaks."
-            />
-            <FeatureCard
-              icon="🏆"
-              title="Achievements & Rewards"
-              description="Earn badges and rewards for maintaining streaks. Celebrate milestones and stay motivated with visual progress markers."
-            />
-            <FeatureCard
-              icon="📱"
-              title="Cross-Platform Sync"
-              description="Access your habits anywhere. Seamlessly sync across devices and never lose track of your progress."
-            />
+
             <FeatureCard
               icon="⚡"
-              title="Time Management"
-              description="Optimize your daily schedule with our powerful timetable tools. Stay organized and achieve more with effective time blocking."
+              title="Focus & Reminders"
+              description="Stay on track with Pomodoro timer and smart notifications. Maintain focus during work sessions and never miss important habits."
+            />
+
+            <FeatureCard
+              icon="🌟"
+              title="Achievements & Community"
+              description="Celebrate milestones with badges and join a community of achievers. Share progress, participate in challenges, and stay motivated together."
+            />
+
+            <FeatureCard
+              icon="🔄"
+              title="Seamless Experience"
+              description="Access your data anywhere with instant sync across devices. Enjoy a consistent experience whether you're at home or on the go."
             />
           </motion.div>
-
+          {/* Replace the Quote and Stats sections with a single, more impactful section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="max-w-4xl mx-auto mt-10 px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="max-w-4xl mx-auto mt-20 px-4"
           >
             <div className="bg-white/15 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                <motion.div
-                  animate={{
-                    rotate: [0, 5, -5, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 1,
-                  }}
-                  className="text-5xl"
-                >
-                  📅
-                </motion.div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    New: Daily Timetable
-                  </h3>
-                  <p className="text-white/90 text-lg leading-relaxed">
-                    Take control of your day with our new Timetable feature!
-                    Plan your schedule, track tasks, and maintain perfect timing
-                    for your habits. Experience seamless organization with
-                    intelligent time blocking and visual progress tracking.
-                  </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div className="flex flex-col items-center">
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      transition: { duration: 2, repeat: Infinity },
+                    }}
+                    className="text-4xl mb-3"
+                  >
+                    🔥
+                  </motion.div>
+                  <h3 className="text-3xl font-bold text-white mb-2">10K+</h3>
+                  <p className="text-white/80">Active Users</p>
+                </div>
+
+                <div className="flex flex-col items-center border-l border-r border-white/10">
+                  <blockquote className="text-white/90 text-lg italic mb-3">
+                    "Small daily improvements are the key to staggering
+                    long-term results"
+                  </blockquote>
+                  <motion.div
+                    animate={{
+                      y: [0, -5, 0],
+                      transition: { duration: 2, repeat: Infinity },
+                    }}
+                    className="text-2xl"
+                  >
+                    ⭐
+                  </motion.div>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <motion.div
+                    animate={{
+                      rotate: [0, 10, -10, 0],
+                      transition: { duration: 2, repeat: Infinity },
+                    }}
+                    className="text-4xl mb-3"
+                  >
+                    📈
+                  </motion.div>
+                  <h3 className="text-3xl font-bold text-white mb-2">1M+</h3>
+                  <p className="text-white/80">Habits Tracked</p>
                 </div>
               </div>
             </div>
           </motion.div>
-          {/* Quote Section */}
-          <QuoteSection />
-
-          {/* Stats Section */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className=" grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
-          >
-            {[
-              { number: "10K+", label: "Active Users", icon: "👥" },
-              { number: "1M+", label: "Habits Tracked", icon: "📈" },
-              { number: "5M+", label: "Streaks Maintained", icon: "🔥" },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.05 }}
-                className="text-center p-6 bg-white/10 rounded-xl backdrop-blur-lg border border-white/20"
-              >
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1 }}
-                  className="text-2xl mb-2 block"
-                >
-                  {stat.icon}
-                </motion.span>
-                <h3 className="text-4xl font-bold text-white mb-2">
-                  {stat.number}
-                </h3>
-                <p className="text-white/80">{stat.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-
           {/* Footer */}
           <motion.footer
             initial={{ opacity: 0 }}
