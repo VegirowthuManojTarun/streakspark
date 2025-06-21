@@ -136,7 +136,7 @@ export default function Navbar() {
                   >
                     <FiActivity className="w-5 h-5" />
                   </motion.div>
-                  Dashboard
+                  Habits
                 </NavLinkStyles>
               )}
             </NavLink>
@@ -263,7 +263,7 @@ export default function Navbar() {
                     >
                       <FiActivity className="w-5 h-5" />
                     </motion.div>
-                    Dashboard
+                    Habits
                   </NavLinkStyles>
                 )}
               </NavLink>
