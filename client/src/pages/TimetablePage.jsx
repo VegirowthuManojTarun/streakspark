@@ -51,8 +51,6 @@ export default function TimetablePage() {
       const token = await getToken();
       const response = await fetchTimetable(token);
 
-      console.log("Server response:", response); // Debug log
-
       if (Array.isArray(response) && response.length > 0) {
         // Initialize completions from server response
         const initialCompletions = new Map();
@@ -62,11 +60,6 @@ export default function TimetablePage() {
             initialCompletions.set(task._id, true);
           }
         });
-
-        console.log(
-          "Initial completions:",
-          Array.from(initialCompletions.entries())
-        ); // Debug log
 
         // Set tasks first
         setTasks(response);
