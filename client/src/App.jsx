@@ -9,7 +9,7 @@ import StreakPage from "./pages/StreakPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import TimetablePage from "./pages/TimetablePage";
 import GlobalNavBar from "./components/GlobalNavbar";
-
+import DiaryPage from "./pages/DiaryPage";
 export default function App() {
   return (
     <>
@@ -31,6 +31,7 @@ export default function App() {
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="dashboard/:id/streak" element={<StreakPage />} />
                   <Route path="timetable" element={<TimetablePage />} />
+                  <Route path="diary" element={<DiaryPage />} />
                   {/* ...other protected children */}
                   <Route
                     path="*"

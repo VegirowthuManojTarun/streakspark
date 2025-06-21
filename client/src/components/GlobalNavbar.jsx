@@ -4,7 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import PomodoroTimer from "./PomodoroTimer";
 import { UserButton } from "@clerk/clerk-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { FiActivity, FiCalendar, FiMenu, FiX } from "react-icons/fi";
+import {
+  FiActivity,
+  FiBook,
+  FiBookOpen,
+  FiCalendar,
+  FiMenu,
+  FiX,
+} from "react-icons/fi";
 
 export default function Navbar() {
   const { user } = useContext(AuthContext);
@@ -95,6 +102,20 @@ export default function Navbar() {
               <FiCalendar className="w-5 h-5" />
               Timetable
             </NavLink>
+            <NavLink
+              to="/diary"
+              className={({ isActive }) =>
+                `flex items-center px-4 py-2 rounded-lg font-medium transition-all gap-2
+                 ${
+                   isActive || location.pathname === "/timetable"
+                     ? "bg-orange-100 text-orange-600 shadow"
+                     : "text-gray-700 hover:bg-gray-50"
+                 }`
+              }
+            >
+              <FiBook className="w-5 h-5" />
+              Diary
+            </NavLink>
           </div>
         )}
 
@@ -175,6 +196,21 @@ export default function Navbar() {
               >
                 <FiCalendar className="w-5 h-5" />
                 Timetable
+              </NavLink>
+              <NavLink
+                to="/diary"
+                className={({ isActive }) =>
+                  `mb-2 flex items-center px-4 py-3 rounded-lg font-medium transition-all gap-2 text-lg
+                     ${
+                       isActive || location.pathname === "/timetable"
+                         ? "bg-orange-100 text-orange-600 shadow"
+                         : "text-gray-700 hover:bg-gray-100"
+                     }`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                <FiBook className="w-5 h-5" />
+                Diary
               </NavLink>
               <div className="flex items-center space-x-3 pl-2 mt-4">
                 <UserButton />
