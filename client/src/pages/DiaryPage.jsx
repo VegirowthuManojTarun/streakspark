@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
+
 import {
   FiSave,
   FiCalendar,
@@ -8,6 +9,8 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import DiaryCalendar from "../components/Diary/DiaryCalendar";
 import LinedJournalTextarea from "../components/Diary/LinedJournalTextArea";
+import { useDiary } from "../context/DiaryContext";
+
 function pad(n) {
   return String(n).padStart(2, "0");
 }
@@ -21,20 +24,39 @@ function formatDateHeading(dt) {
     day: "numeric",
   });
 }
-
 export default function DiaryPage() {
   const [date, setDate] = useState(() => {
     const savedDate = localStorage.getItem("diary_last_date");
-    if (savedDate) {
-      return new Date(savedDate);
-    }
+    if (savedDate) return new Date(savedDate);
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   });
+  const {
+    entries,
+    getEntryByDateStr,
+    addEntry,
+    updateEntry,
+    removeEntry,
+    loading,
+  } = useDiary();
+
+  const dateStr = useMemo(() => dateToStr(date), [date]);
+  const entry = getEntryByDateStr(dateStr);
+
   const [value, setValue] = useState("");
   const [saveMsg, setSaveMsg] = useState("");
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [pageDirection, setPageDirection] = useState(0); // -1 for left, 1 for right
+  const [pageDirection, setPageDirection] = useState(0);
+
+  // UI: reveal entry on date change
+  useEffect(() => {
+    setValue(entry ? entry.content : "");
+  }, [entry, dateStr]);
+
+  // Save last selected date for UX
+  useEffect(() => {
+    localStorage.setItem("diary_last_date", date.toISOString());
+  }, [date]);
 
   const handleDateNavigation = (direction) => {
     setPageDirection(direction);
@@ -43,21 +65,7 @@ export default function DiaryPage() {
     handleDateChange(newDate);
   };
 
-  // Save selected date to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("diary_last_date", date.toISOString());
-  }, [date]);
-
-  // Load data for date
-  useEffect(() => {
-    const key = `diary_unified_${dateToStr(date)}`;
-    const stored = window.localStorage.getItem(key);
-    setValue(stored || "");
-  }, [date]);
-
-  // Modified setDate function to ensure consistent date handling
   const handleDateChange = (newDate) => {
-    // Ensure we're working with a clean date object
     const cleanDate = new Date(
       newDate.getFullYear(),
       newDate.getMonth(),
@@ -66,19 +74,22 @@ export default function DiaryPage() {
     setDate(cleanDate);
   };
 
-  // Save logic
-  function handleSave(e) {
-    if (e) e.preventDefault();
-    const key = `diary_unified_${dateToStr(date)}`;
-    if (value.trim().length > 0) {
-      window.localStorage.setItem(key, value);
-      setSaveMsg("Saved!");
+  async function handleSave(e) {
+    e && e.preventDefault();
+    if (!value.trim() && entry) {
+      // Remove
+      await removeEntry(entry._id);
+      setSaveMsg("Entry deleted!");
       setTimeout(() => setSaveMsg(""), 1200);
-    } else {
-      window.localStorage.removeItem(key);
+      return;
     }
+    if (entry) await updateEntry(entry._id, value);
+    else await addEntry(dateStr, value);
+    setSaveMsg("Saved!");
+    setTimeout(() => setSaveMsg(""), 1200);
   }
-  // Page turn animation variants
+
+  // Animation variants
   const pageVariants = {
     enter: (direction) => ({
       x: direction * 500,
@@ -114,7 +125,6 @@ export default function DiaryPage() {
           >
             <FiChevronLeft className="w-6 h-6" />
           </motion.button>
-
           {/* Date Display */}
           <div className="flex items-center">
             <motion.h1
@@ -176,34 +186,125 @@ export default function DiaryPage() {
                    border border-orange-100/90 pt-2.5 pb-3 px-0 md:px-0 
                    bg-white/95 transition"
         >
-          <LinedJournalTextarea value={value} setValue={setValue} />
+          <LinedJournalTextarea
+            value={value}
+            setValue={setValue}
+            loading={loading}
+          />
+          {/* Enhanced Action Buttons Section */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute right-10 -bottom-7 flex items-center space-x-3"
+            className="absolute right-6 -bottom-8 flex items-center gap-3"
           >
+            {/* Primary Save/Update Button */}
             <motion.button
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="flex items-center text-orange-700 text-base bg-orange-50 
-                       hover:bg-orange-200 px-4 py-1.5 rounded shadow transition 
-                       font-bold border border-orange-100 gap-2"
+              disabled={loading}
+              className={`
+      flex items-center gap-2 px-4 py-2.5 rounded-lg
+      font-semibold text-sm transition-all duration-200
+      ${
+        loading
+          ? "bg-orange-100 text-orange-400 cursor-not-allowed"
+          : "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/40 hover:-translate-y-0.5"
+      }
+    `}
             >
-              <FiSave />
-              Save Entry
+              <motion.div
+                animate={loading ? { rotate: 360 } : {}}
+                transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              >
+                <FiSave className={`w-4 h-4 ${loading ? "opacity-70" : ""}`} />
+              </motion.div>
+              {loading ? "Saving..." : entry ? "Update Entry" : "Save Entry"}
             </motion.button>
+
+            {/* Delete Button - Only show if entry exists */}
+            {value && entry && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={async () => {
+                  await removeEntry(entry._id);
+                  setValue("");
+                  setSaveMsg("Entry deleted!");
+                }}
+                disabled={loading}
+                className={`
+        flex items-center gap-2 px-4 py-2.5 rounded-lg
+        font-semibold text-sm transition-all duration-200
+        ${
+          loading
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300 hover:-translate-y-0.5"
+        }
+      `}
+              >
+                <motion.div
+                  whileHover={{ rotate: 20 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </motion.div>
+                Delete
+              </motion.button>
+            )}
+
+            {/* Save Message Animation */}
             <AnimatePresence>
               {saveMsg && (
-                <motion.span
-                  key="saved"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0, transition: { duration: 0.25 } }}
-                  exit={{ opacity: 0, y: -10, transition: { duration: 0.18 } }}
-                  className="ml-2 text-green-500 font-medium"
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: { type: "spring", stiffness: 400, damping: 25 },
+                  }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute right-0 top-14 bg-white px-4 py-2 rounded-lg shadow-lg border border-green-100"
                 >
-                  {saveMsg}
-                </motion.span>
+                  <div className="flex items-center gap-2">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 0.6, times: [0, 0.5, 1] }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-green-500"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    </motion.div>
+                    <span className="text-sm font-medium text-green-600">
+                      {saveMsg}
+                    </span>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </motion.div>

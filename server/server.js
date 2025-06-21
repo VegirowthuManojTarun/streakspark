@@ -9,6 +9,8 @@ require("./config/dbConnections");
 const authRouter = require("./routes/authRouter");
 const taskRouter = require("./routes/taskRouter");
 const timeTableRouter = require("./routes/timeTableRouter");
+const diaryEntryRouter = require("./routes/diaryEntryRouter");
+
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 
 const app = express();
@@ -29,6 +31,8 @@ app.use(clerkMiddleware());
 app.use("/api/auth", authRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/timetable", timeTableRouter);
+app.use("/api/diary", diaryEntryRouter);
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to StreakSpark" });
 });

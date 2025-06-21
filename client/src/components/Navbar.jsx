@@ -107,7 +107,7 @@ export default function Navbar() {
               className={({ isActive }) =>
                 `flex items-center px-4 py-2 rounded-lg font-medium transition-all gap-2
                  ${
-                   isActive || location.pathname === "/timetable"
+                   isActive || location.pathname === "/diary"
                      ? "bg-orange-100 text-orange-600 shadow"
                      : "text-gray-700 hover:bg-gray-50"
                  }`
@@ -202,7 +202,7 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `mb-2 flex items-center px-4 py-3 rounded-lg font-medium transition-all gap-2 text-lg
                      ${
-                       isActive || location.pathname === "/timetable"
+                       isActive || location.pathname === "/diary"
                          ? "bg-orange-100 text-orange-600 shadow"
                          : "text-gray-700 hover:bg-gray-100"
                      }`

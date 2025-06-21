@@ -61,3 +61,23 @@ export const toggleTaskCompletion = async (taskId, completed, token) => {
     throw error;
   }
 };
+
+// --- Diary API (NEW) ---
+
+export const fetchDiaryEntryByDate = (dateStr, token) =>
+  API.get(`/diary/entries?dateStr=${dateStr}`, withAuth(token));
+
+export const createDiaryEntry = (data, token) =>
+  API.post("/diary/entries", data, withAuth(token));
+
+export const updateDiaryEntry = (id, data, token) =>
+  API.put(`/diary/entries/${id}`, data, withAuth(token));
+
+export const fetchDiaryEntryById = (id, token) =>
+  API.get(`/diary/entries/${id}`, withAuth(token));
+
+export const deleteDiaryEntry = (id, token) =>
+  API.delete(`/diary/entries/${id}`, withAuth(token));
+
+export const fetchAllDiaryEntries = (token) =>
+  API.get("/diary/entries", withAuth(token));

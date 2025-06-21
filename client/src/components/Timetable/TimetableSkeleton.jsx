@@ -92,15 +92,16 @@ const TimetableSkeleton = () => {
             </thead>
             <tbody>
               {dummyRows.map((_, idx) => (
-                <tr key={idx} className="relative overflow-hidden">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent"
-                    variants={shimmer}
-                    initial="hidden"
-                    animate="visible"
-                  />
-                  <td className="px-6 py-4">
+                <tr key={idx} className="overflow-hidden">
+                  <td className="px-6 py-4 relative">
                     <div className="h-4 w-24 bg-gray-200 rounded" />
+                    {/* shimmer effect IN the <td> */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none"
+                      variants={shimmer}
+                      initial="hidden"
+                      animate="visible"
+                    />
                   </td>
                   <td className="px-6 py-4">
                     <div className="h-4 bg-gray-200 rounded" />
