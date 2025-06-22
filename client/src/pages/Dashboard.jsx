@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import { TaskContext } from "../context/TaskContext";
 import TaskList from "../components/TaskList";
 import TaskModal from "../components/modals/TaskModal";
@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 import TaskListSkeleton from "../components/skeletons/TaskListSkeleton";
+import StreakCalendarSection from "../components/StreakCalendarSection";
 
 // Animation variants
 const pageVariants = {
@@ -34,33 +35,6 @@ const itemVariants = {
   },
 };
 
-const QuoteSection = ({ quote }) => (
-  <motion.blockquote
-    variants={itemVariants}
-    className="mb-6 p-4 bg-white rounded-xl shadow-sm border border-gray-100"
-  >
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.2 }}
-      className="flex items-start"
-    >
-      <span className="text-3xl text-orange-400 mr-3">❝</span>
-      <div className="flex flex-col">
-        <p className="text-gray-600 italic text-lg">{quote.q}</p>
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-gray-400 text-sm mt-2"
-        >
-          — {quote.a}
-        </motion.span>
-      </div>
-    </motion.div>
-  </motion.blockquote>
-);
-
 export default function Dashboard() {
   const { quote, loading } = useContext(TaskContext);
   const [modalTask, setModalTask] = useState(null);
@@ -75,9 +49,7 @@ export default function Dashboard() {
       className="min-h-screen bg-gray-50"
     >
       <div className="container mx-auto max-w-7xl px-4 py-6">
-        <AnimatePresence mode="wait">
-          {quote && <QuoteSection quote={quote} />}
-        </AnimatePresence>
+        <StreakCalendarSection />
         <div className="flex flex-col space-y-6 mb-6">
           <motion.div
             variants={itemVariants}

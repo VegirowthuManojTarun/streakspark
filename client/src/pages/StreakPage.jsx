@@ -339,11 +339,11 @@ export default function StreakPage() {
                               <motion.span
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                className="text-2xl opacity-50"
+                                className="text-2xl opacity-20"
                                 role="img"
                                 aria-label="missed"
                               >
-                                🥲
+                                🔥
                               </motion.span>
                             ) : (
                               <span className="text-gray-400">

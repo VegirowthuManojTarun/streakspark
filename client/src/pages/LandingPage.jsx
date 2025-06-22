@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import LandingNavbar from "../components/LandingNavbar";
 import ReviewsSection from "../components/ReviewsSection";
 import Footer from "../components/Footer";
+import ProceduralBackground from "../components/ProceduralBackground";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -73,7 +74,11 @@ const QuoteSection = () => (
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/10 to-neutral-100">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/10 to-neutral-100 relative cursor-grab ">
+      <ProceduralBackground
+        ballCount={20} // Number of balls
+        backgroundColor="white"
+      />
       {/* Hero Section */}
       <LandingNavbar />
       <div className="container-fluid mx-auto px-4 pt-20">
@@ -133,12 +138,12 @@ export default function LandingPage() {
             </motion.h1>
             <div className="max-w-4xl mx-auto">
               <p className="text-lg md:text-xl text-neutral-600 mb-8 leading-relaxed">
-                Tired of starting habits but never sticking to them? StreakSpark
-                combines powerful habit tracking, daily planning, and
-                motivational features to help you stay consistent and achieve
-                your goals, one day at a time.
+                Struggling to maintain habits? StreakSpark turns motivation into
+                action, offering smart tracking, daily planning, and
+                inspirational tools that transform your goals from dreams to
+                daily achievements.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 mx-15 md:mx-0">
                 {[
                   {
                     icon: "📈", // Instead of 📊 - Better represents progress tracking
@@ -163,7 +168,7 @@ export default function LandingPage() {
                       scale: 1.05,
                       boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
                     }}
-                    className="bg-white/95 p-6 rounded-xl border border-neutral-200
+                    className="bg-white/95 p-5 rounded-xl border border-neutral-200
                          transition-all duration-200 backdrop-blur-sm"
                   >
                     <motion.div
@@ -400,7 +405,7 @@ export default function LandingPage() {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-orange-400/20 to-transparent rounded-full"
+          className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-orange-400/40 to-transparent rounded-full"
         />
         <motion.div
           animate={{
@@ -412,7 +417,7 @@ export default function LandingPage() {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-orange-600/20 to-transparent rounded-full"
+          className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-orange-600/60 to-transparent rounded-full"
         />
       </div>
     </div>
