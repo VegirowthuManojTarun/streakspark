@@ -6,24 +6,24 @@ const ReviewCard = ({ name, role, comment, image }) => (
   <motion.div
     whileHover={{ scale: 1.02 }}
     className="flex-shrink-0 w-[300px] p-6 mx-4 
-                 bg-white/10 backdrop-blur-lg rounded-xl 
-                 border border-white/20 hover:bg-white/15 
-                 transition-all duration-200 shadow-lg"
+               bg-white rounded-xl border border-neutral-200
+               hover:border-primary-200 transition-all duration-200 
+               shadow-sm hover:shadow-md"
   >
     <div className="flex items-start gap-4">
       <img
         src={image}
         alt={name}
         className="w-12 h-12 rounded-full object-cover 
-                     border-2 border-orange-300/50"
+                   border-2 border-primary-200 shadow-sm"
       />
       <div>
-        <h4 className="text-white font-semibold">{name}</h4>
-        <p className="text-white/60 text-sm">{role}</p>
+        <h4 className="text-neutral-800 font-semibold">{name}</h4>
+        <p className="text-neutral-500 text-sm">{role}</p>
       </div>
     </div>
     <div className="mt-4">
-      <p className="text-white/80 text-sm leading-relaxed">"{comment}"</p>
+      <p className="text-neutral-600 text-sm leading-relaxed">"{comment}"</p>
     </div>
     <div className="flex gap-1 mt-4">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -32,7 +32,7 @@ const ReviewCard = ({ name, role, comment, image }) => (
           initial={{ opacity: 0.5 }}
           animate={{ opacity: 1 }}
           transition={{ delay: star * 0.1 }}
-          className="text-orange-300"
+          className="text-primary-500"
         >
           ⭐
         </motion.span>
@@ -96,10 +96,16 @@ export default function ReviewsSection() {
         transition={{ duration: 0.5 }}
         className="text-center mb-12"
       >
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-          Join Our Community of Achievers
+        <h2 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4 relative">
+          Join Our Community of{" "}
+          <span
+            className="bg-gradient-to-r from-primary-500 to-primary-600 
+                   bg-clip-text text-transparent"
+          >
+            Achievers
+          </span>
         </h2>
-        <p className="text-white/80 text-lg">
+        <p className="text-neutral-600 text-lg leading-relaxed">
           See what others have accomplished with StreakSpark
         </p>
       </motion.div>
@@ -150,14 +156,17 @@ export default function ReviewsSection() {
         </motion.div>
 
         {/* Gradient Overlays */}
-        <div
-          className="absolute inset-y-0 left-0 w-20
-                        bg-gradient-to-r from-orange-600 via-orange-600/90 to-transparent z-10"
-        />
-        <div
-          className="absolute inset-y-0 right-0 w-20 
-                        bg-gradient-to-l from-orange-600 via-orange-600/90 to-transparent z-10"
-        />
+        <>
+          <div
+            className="absolute inset-y-0 left-0 w-20 z-10
+               bg-gradient-to-r from-neutral-50 via-neutral-50/90 to-transparent"
+          />
+
+          <div
+            className="absolute inset-y-0 right-0 w-20 z-10
+               bg-gradient-to-l from-neutral-50 via-neutral-50/90 to-transparent"
+          />
+        </>
       </div>
     </div>
   );
