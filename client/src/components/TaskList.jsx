@@ -85,9 +85,9 @@ export default function TaskList({
   return (
     <>
       {/* Desktop View - Two Columns */}
-      <div className="hidden md:flex gap-6 h-[calc(100vh-200px)]">
+      <div className="hidden md:flex gap-2 lg:gap-4  h-[calc(100vh-200px)]">
         {/* Unmarked Tasks Column */}
-        <div className="flex-1">
+        <div className="w-1/2">
           <div className="bg-white rounded-t-xl p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <span>To Complete</span>
@@ -96,7 +96,7 @@ export default function TaskList({
               </span>
             </h2>
           </div>
-          <div className="overflow-y-auto h-full pr-2 pb-4">
+          <div className="overflow-y-auto h-full pb-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -122,7 +122,7 @@ export default function TaskList({
         </div>
 
         {/* Marked Tasks Column */}
-        <div className="flex-1">
+        <div className="w-1/2">
           <div className="bg-white rounded-t-xl p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <span>Completed</span>
@@ -131,7 +131,7 @@ export default function TaskList({
               </span>
             </h2>
           </div>
-          <div className="overflow-y-auto h-full pl-2 pb-4">
+          <div className="overflow-y-auto h-full pb-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

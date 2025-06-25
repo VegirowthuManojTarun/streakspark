@@ -5,6 +5,7 @@ import LandingNavbar from "../components/LandingNavbar";
 import ReviewsSection from "../components/ReviewsSection";
 import Footer from "../components/Footer";
 import ProceduralBackground from "../components/ProceduralBackground";
+import FeedbackSection from "../components/FeedbackSection";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -143,6 +144,43 @@ export default function LandingPage() {
                 inspirational tools that transform your goals from dreams to
                 daily achievements.
               </p>
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="mb-10"
+              >
+                <Link
+                  to="/login"
+                  className="bg-gradient-to-r from-primary-500 to-primary-600 
+               text-white px-8 py-4 rounded-full
+               font-semibold text-lg shadow-md
+               hover:from-primary-600 hover:to-primary-700 
+               transform hover:scale-105
+               transition-all duration-200 inline-flex items-center gap-2
+               relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Start Your Journey</span>
+                  <svg
+                    className="w-5 h-5 relative z-10 transform group-hover:translate-x-1 
+                 transition-transform duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                  <div
+                    className="absolute inset-0 bg-white/20 opacity-0 
+                    group-hover:opacity-100 transition-opacity duration-200"
+                  ></div>
+                </Link>
+              </motion.div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 mx-15 md:mx-0">
                 {[
                   {
@@ -211,43 +249,7 @@ export default function LandingPage() {
               </motion.div>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mb-20"
-          >
-            <Link
-              to="/login"
-              className="bg-gradient-to-r from-primary-500 to-primary-600 
-               text-white px-8 py-4 rounded-full
-               font-semibold text-lg shadow-md
-               hover:from-primary-600 hover:to-primary-700 
-               transform hover:scale-105
-               transition-all duration-200 inline-flex items-center gap-2
-               relative overflow-hidden group"
-            >
-              <span className="relative z-10">Start Your Journey</span>
-              <svg
-                className="w-5 h-5 relative z-10 transform group-hover:translate-x-1 
-                 transition-transform duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
-              <div
-                className="absolute inset-0 bg-white/20 opacity-0 
-                    group-hover:opacity-100 transition-opacity duration-200"
-              ></div>
-            </Link>
-          </motion.div>
+
           {/* Features Grid */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -389,6 +391,7 @@ export default function LandingPage() {
             </div>
           </motion.div>
           <ReviewsSection />
+          <FeedbackSection />
           {/* Footer */}
           <Footer />
         </div>

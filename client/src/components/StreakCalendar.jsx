@@ -67,7 +67,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="bg-white rounded-lg p-4 text-xs shadow-sm"
+        className="bg-white rounded-lg px-4 py-3 text-xs shadow-sm"
       >
         <h3 className="text-md sm:text-lg font-bold text-gray-800 mb-4">
           Rank Ladder
@@ -76,14 +76,14 @@ const StreakCalendar = ({ highestStreakTask }) => {
           {RANK_TIERS.map((tier) => (
             <motion.div
               key={tier.name}
-              className={`flex items-center p-1.5 rounded-md ${
+              className={`flex items-center px-3 py-1.5 rounded-md ${
                 tier.name === currentRank.name
                   ? "bg-orange-50 border border-orange-200"
                   : ""
               }`}
               whileHover={{ scale: 1.02 }}
             >
-              <span className="text-sm mr-1.5">{tier.icon}</span>
+              <span className="text-sm mr-2">{tier.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className={`font-medium ${tier.color} truncate`}>
                   {tier.name}
@@ -96,7 +96,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded-full whitespace-nowrap ml-1"
+                  className="bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded-full whitespace-nowrap ml-2"
                 >
                   Current
                 </motion.div>
@@ -110,33 +110,23 @@ const StreakCalendar = ({ highestStreakTask }) => {
 
   return (
     <>
-      <div className="flex gap-3">
+      <div className="flex lg:gap-12 items-center justify-between">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-lg shadow-sm p-3 w-1/2"
+          className="bg-white/100 rounded-lg shadow-md px-6 py-3 mx-auto"
         >
           <motion.h2
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-gray-800 text-md md:text-lg font-bold mb-6"
+            className="text-gray-800 text-md md:text-lg font-bold text-center"
           >
             Monthly Streak
           </motion.h2>
           {/* Task Info Header */}
           <div className="mb-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-gray-700 truncate max-w-[100px]">
-                  {highestStreakTask.name}
-                </span>
-                <div className="flex items-center gap-0.5">
-                  <span className="text-[10px]">🔥</span>
-                  <span className="text-[10px] font-bold text-orange-500">
-                    {highestStreakTask.streak || 0}
-                  </span>
-                </div>
-              </div>
+            <div className="flex items-center justify-center">
+             
 
               {/* Month Navigation */}
               <div className="flex items-center gap-2">
@@ -146,10 +136,10 @@ const StreakCalendar = ({ highestStreakTask }) => {
                   onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <IoChevronBackCircle className="w-3 h-3" />
+                  <IoChevronBackCircle className="w-3 h-3 md:w-5 md:h-5" />
                 </motion.button>
 
-                <span className="text-[10px] font-medium text-gray-600">
+                <span className="text-[10px] font-medium text-gray-600 md:text-lg">
                   {format(monthStart, "MMM yyyy")}
                 </span>
 
@@ -159,7 +149,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
                   onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <IoChevronForwardCircle className="w-3 h-3" />
+                  <IoChevronForwardCircle className="w-3 h-3 md:w-5 md:h-5" />
                 </motion.button>
               </div>
             </div>
@@ -170,7 +160,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
             {["S", "M", "T", "W", "T", "F", "S"].map((d, index) => (
               <div
                 key={`weekday-${index}`}
-                className="text-[8px] font-medium text-gray-400"
+                className="text-[8px] font-medium text-gray-400 lg:text-sm lg:mt-1"
               >
                 {d}
               </div>
@@ -209,7 +199,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="text-sm"
+                      className="text-sm lg:text-lg lg:px-1"
                       role="img"
                       aria-label="achieved"
                     >
@@ -219,7 +209,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="text-sm opacity-20"
+                      className="text-sm opacity-20 lg:text-lg lg:px-1"
                       role="img"
                       aria-label="missed"
                     >
@@ -233,7 +223,7 @@ const StreakCalendar = ({ highestStreakTask }) => {
             })}
           </div>
         </motion.div>
-        <div className="w-1/2">
+        <div className="hidden lg:inline">
           <CompactRankLadder streak={highestStreakTask.streak || 0} />
         </div>
       </div>

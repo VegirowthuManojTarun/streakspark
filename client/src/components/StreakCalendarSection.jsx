@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TaskContext } from "../context/TaskContext";
 import StreakCalendar from "./StreakCalendar";
 import { useNavigate } from "react-router-dom";
+
 const StreakCalendarSection = () => {
   const { quote, tasks } = useContext(TaskContext);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -29,88 +30,69 @@ const StreakCalendarSection = () => {
       navigate(`/dashboard/${selectedTask._id}/streak`);
     }
   };
-  // Task Selection Dropdown
-  const TaskSelector = () => (
-    <div className="relative">
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 
-                     flex items-center justify-between shadow-sm hover:border-gray-300
-                     transition-colors duration-200"
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-gray-600 text-sm">Selected Task:</span>
-          <span className="font-medium text-gray-800">
-            {selectedTask?.name || "Select a task"}
-          </span>
-        </div>
-        <svg
-          className={`w-5 h-5 text-gray-500 transition-transform duration-200 
-                       ${isDropdownOpen ? "transform rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </motion.button>
+  const TaskSelector = () => {
+    // Sort tasks by streak (highest to lowest)
+    const sortedTasks = useMemo(() => {
+      return [...(tasks || [])].sort(
+        (a, b) => (b.streak || 0) - (a.streak || 0)
+      );
+    }, [tasks]);
 
-      <AnimatePresence>
-        {isDropdownOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-1 bg-white border 
-                         border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
-          >
-            {tasks?.map((task) => (
+    return (
+      <div className="w-full bg-white/50 backdrop-blur-sm rounded-xl shadow-md border border-gray-100">
+        {/* Scroll Container */}
+        <div className="relative">
+          {/* Gradient Shadows for Scroll Indication */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10" />
+
+          {/* Scrollable Task List */}
+          <div className="flex overflow-x-auto scrollbar-hide py-4 px-4 gap-3 relative">
+            {sortedTasks.map((task) => (
               <motion.button
-                key={task.id}
-                whileHover={{ backgroundColor: "rgba(249, 250, 251, 1)" }}
-                onClick={() => {
-                  setSelectedTask(task);
-                  setIsDropdownOpen(false);
-                }}
-                className={`w-full px-4 py-2.5 text-left flex items-center justify-between
-                             ${
-                               selectedTask?.id === task.id
-                                 ? "bg-orange-50 text-orange-600"
-                                 : "text-gray-700"
-                             }
-                             ${
-                               task.id === highestStreakTask?.id
-                                 ? "font-medium"
-                                 : ""
-                             }
-                             hover:bg-gray-50 transition-colors duration-150`}
+                key={task._id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedTask(task)}
+                className={`
+                  flex-shrink-0 w-24 h-20 rounded-xl 
+                  flex flex-col items-center justify-center gap-2 
+                  border-2 transition-all duration-200
+                  ${
+                    selectedTask?._id === task._id
+                      ? "border-orange-500 bg-orange-50"
+                      : "border-gray-200 hover:border-gray-300 bg-white"
+                  }
+                `}
               >
-                <div className="flex items-center gap-2">
-                  <span>{task.name}</span>
-                  {task.id === highestStreakTask?.id && (
-                    <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">
-                      Highest Streak
-                    </span>
-                  )}
+                {/* Streak Badge */}
+                <div className="relative">
+                  <span className="text-4xl">🔥</span>
+                  <span
+                    className={`
+                      absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-1/10
+                      text-sm font-bold bg-white/80 px-1 rounded-full
+                      ${
+                        selectedTask?._id === task._id
+                          ? "text-orange-600"
+                          : "text-gray-700"
+                      }
+                    `}
+                  >
+                    {task.streak || 0}
+                  </span>
                 </div>
-                <span className="flex items-center gap-1 text-sm">
-                  <span className="text-orange-500">🔥</span>
-                  {task.streak || 0}
+                {/* Task Name */}
+                <span className="text-sm font-medium text-gray-700 px-3 truncate w-full text-center">
+                  {task.name}
                 </span>
               </motion.button>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -134,10 +116,53 @@ const StreakCalendarSection = () => {
     },
   };
 
+  // Add this new component for statistics
+  const StatsSection = ({ task }) => (
+    <motion.div
+      variants={childVariants}
+      className="hidden lg:grid grid-cols-3 gap-4 mb-6"
+    >
+      {[
+        {
+          label: "Current Streak",
+          value: task?.streak || 0,
+          icon: "🔥",
+          color: "text-orange-500",
+        },
+        {
+          label: "Completion Rate",
+          value: `${Math.round(((task?.streak || 0) / 30) * 100)}%`,
+          icon: "📊",
+          color: "text-blue-500",
+        },
+        {
+          label: "Best Streak",
+          value: task?.longestStreak || 0,
+          icon: "⭐",
+          color: "text-yellow-500",
+        },
+      ].map((stat, index) => (
+        <motion.div
+          key={index}
+          whileHover={{ scale: 1.02 }}
+          className="bg-white/50 backdrop-blur-sm rounded-xl p-4 border border-gray-100 shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">{stat.icon}</span>
+            <span className="text-sm text-gray-600">{stat.label}</span>
+          </div>
+          <span className={`text-2xl font-bold ${stat.color}`}>
+            {stat.value}
+          </span>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+
   const QuoteSection = () => (
     <motion.div
       variants={childVariants}
-      className="bg-white/50 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-gray-100"
+      className="bg-white/50 backdrop-blur-sm rounded-xl p-3 shadow-sm border border-gray-100 lg:p-5"
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -166,13 +191,13 @@ const StreakCalendarSection = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="mb-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
+      className="mb-8 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
     >
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col md:flex-row">
         {/* Left Column - Info & Quote */}
         <motion.div
           variants={childVariants}
-          className="flex-1 p-8 lg:border-r border-gray-200"
+          className="flex-1 md:w-[62%] lg:w-[50%] p-5 lg:border-r border-gray-200 lg:px-10"
         >
           <div className="max-w-lg">
             {/* Header */}
@@ -189,41 +214,11 @@ const StreakCalendarSection = () => {
               </div>
             </motion.div>
 
+            <StatsSection task={selectedTask} />
             {/* Task Selector */}
-            <motion.div variants={childVariants} className="mb-6">
+            <motion.div className="mb-6">
               <TaskSelector />
             </motion.div>
-
-            {/* Legend & Info */}
-            <motion.div
-              variants={childVariants}
-              className="bg-white/70 backdrop-blur-sm rounded-xl p-4 mb-6 shadow-sm border border-gray-100"
-            >
-              <h3 className="text-gray-800 font-medium mb-3">
-                Track Your Progress
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <motion.span
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="text-orange-500"
-                  >
-                    🔥
-                  </motion.span>
-                  <span>Completed Days</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="opacity-50">🔥</span>
-                  <span>Missed Days</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span className="text-orange-500">◯</span>
-                  <span>Current Day</span>
-                </div>
-              </div>
-            </motion.div>
-
             {/* Quote Section */}
             {quote && <QuoteSection />}
           </div>
@@ -232,7 +227,7 @@ const StreakCalendarSection = () => {
         {/* Right Column - Calendar */}
         <motion.div
           variants={childVariants}
-          className="lg:w-1/2 p-6 bg-white/50"
+          className="md:w-[38%] lg:w-[50%] py-4 bg-white/100 flex items-center justify-center"
         >
           <StreakCalendar highestStreakTask={selectedTask} />
         </motion.div>
@@ -243,7 +238,7 @@ const StreakCalendarSection = () => {
         variants={childVariants}
         className="bg-white border-t border-gray-200 p-4 flex justify-between items-center"
       >
-        <div className="text-gray-600 text-sm">
+        <div className="text-gray-600 text-sm md:text-lg lg:px-4">
           Keep pushing! You're doing great! 💪
         </div>
         <motion.button
@@ -254,7 +249,8 @@ const StreakCalendarSection = () => {
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg
                      flex items-center gap-2 transition-colors text-sm shadow-sm"
         >
-          <span>View Detailed Analytics</span>
+          <span className="md:hidden">Details</span>
+          <span className="hidden md:inline text-lg">View Details</span>
           <span>→</span>
         </motion.button>
       </motion.div>
