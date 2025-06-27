@@ -67,8 +67,8 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-gray-100 
-                 px-2 py-3 sticky top-0 z-50"
+      className="bg-white/10 backdrop-blur-sm shadow-xl border-b border-gray-100 
+                 px-2 py-3 sticky top-3 z-50 mx-8 mb-3 rounded-xl"
     >
       <div className="container mx-auto flex items-center justify-between relative">
         {/* Logo */}
