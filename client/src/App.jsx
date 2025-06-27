@@ -15,6 +15,7 @@ export default function App() {
   return (
     <>
       <Toaster position="top-center" />
+      <NavBar />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -26,7 +27,6 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ErrorBoundary>
-                <NavBar />
                 {/* Always renders the nav on all child routes */}
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />

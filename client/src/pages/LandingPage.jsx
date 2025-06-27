@@ -81,7 +81,6 @@ export default function LandingPage() {
         backgroundColor="white"
       />
       {/* Hero Section */}
-      <LandingNavbar />
       <div className="container-fluid mx-auto px-4 pt-20">
         <div className="flex flex-col items-center justify-center text-center">
           <motion.div
